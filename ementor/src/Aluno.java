@@ -17,7 +17,7 @@ public class Aluno extends Pessoa{
                          String matricula, int periodo, String turma, double[] notas){
         //Classe Pessoa
         this.nome = nome;
-        this.dataNascimento = dataNascimento;
+        this.nascimento = dataNascimento;
         this.cpf = cpf;
         this.telefone = telefone;
         this.rua = rua;
