@@ -13,7 +13,9 @@ public class Aluno extends Pessoa{
         this.periodo = periodo;
         this.turma = turma;
     }
-    public void setDados(String nome, Date dataNascimento, String cpf, String telefone, String rua, String bairro, String cidade, String estado, String matricula, int periodo, String turma, double[] notas){
+    public void setDados(String nome, Date dataNascimento, String cpf, String telefone, String rua, String bairro, String cidade, String estado,
+                         String matricula, int periodo, String turma, double[] notas){
+        //Classe Pessoa
         this.nome = nome;
         this.dataNascimento = dataNascimento;
         this.cpf = cpf;
@@ -22,7 +24,7 @@ public class Aluno extends Pessoa{
         this.bairro = bairro;
         this.cidade = cidade;
         this.estado = estado;
-
+        //Classe Aluno
         this.matricula = matricula;
         this.periodo = periodo;
         this.turma = turma;
@@ -34,8 +36,10 @@ public class Aluno extends Pessoa{
     public int getPeriodo(){
         return this.periodo;
     }
-    public void printAluno(){
-        String texto = "Dados Aluno:\n" + "Nome: " + this.nome + "\n" +  "CPF: " + this.cpf + "\n" +  "Telefone: " + this.telefone  + "\n" + "Cidade/Estado: " + this.cidade + "/" + this.estado + "\n" + "------------------------\n" +  "Matricula: " + this.matricula + "\n" + "Periodo: " + this.periodo + "\n" + "Turma: " + this.turma;
+    public void imprimirDados(){
+        String texto = "Dados Aluno:\n" + "Nome: " + this.nome + "\n" +  "CPF: " + this.cpf + "\n" +  "Telefone: " + this.telefone  + "\n" + "Cidade/Estado: " + this.cidade + "/" + this.estado + "\n"
+                        + "------------------------\n" +
+                        "Matricula: " + this.matricula + "\n" + "Periodo: " + this.periodo + "\n" + "Turma: " + this.turma;
         JOptionPane.showMessageDialog(null, texto);
     }
 }
