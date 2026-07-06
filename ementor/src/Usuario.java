@@ -1,13 +1,13 @@
 public class Usuario extends Pessoa {
     private String nomeUsuario;
     private String senha;
-    private int nivelAcesso; // 1 - Administrador, 2 - Professor, 3 - Aluno
+    private NivelAcesso nivelAcesso; // 1 - Administrador, 2 - Professor, 3 - Aluno
 
     public Usuario() {
         // Construtor padrão
     }
 
-    public void setDadosUsuario(String nomeUsuario, String senha, int nivelAcesso) {
+    public void setDadosUsuario(String nomeUsuario, String senha, NivelAcesso nivelAcesso) {
         this.nomeUsuario = nomeUsuario;
         this.senha = senha;
         this.nivelAcesso = nivelAcesso;
@@ -21,7 +21,7 @@ public class Usuario extends Pessoa {
         return senha;
     }
 
-    public int getNivelAcesso() {
+    public NivelAcesso getNivelAcesso() {   
         return nivelAcesso;
     }
 }
