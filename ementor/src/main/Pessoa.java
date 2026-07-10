@@ -1,3 +1,4 @@
+package main;
 import java.util.Date;
 public class Pessoa {
     protected String nome;
@@ -23,5 +24,30 @@ public class Pessoa {
         this.bairro = bairro;
         this.cidade = cidade;
         this.estado = estado;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+    public String getCidade() {
+        return cidade;
+    }
+    public String getNome() {
+        return nome;
+    }
+    public Date getNascimento() {
+        return nascimento;
+    }
+    public String getCpf() {
+        return cpf;
+    }
+    public String getTelefone() {
+        return telefone;
+    }
+    public String getRua() {
+        return rua;
+    }
+    public String getEstado() {
+        return estado;
     }
 }

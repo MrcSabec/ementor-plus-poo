@@ -1,4 +1,6 @@
+package main;
 import javax.swing.*;
+
 import java.util.Date;
 
 public class Aluno extends Pessoa{
@@ -35,6 +37,12 @@ public class Aluno extends Pessoa{
     }
     public int getPeriodo(){
         return this.periodo;
+    }
+    public String getTurma(){
+        return this.turma;
+    }
+    public double[] getNotas(){
+        return this.notas;
     }
     public void imprimirDados(){
         String texto = "Dados Aluno:\n" + "Nome: " + this.nome + "\n" +  "CPF: " + this.cpf + "\n" +  "Telefone: " + this.telefone  + "\n" + "Cidade/Estado: " + this.cidade + "/" + this.estado + "\n"

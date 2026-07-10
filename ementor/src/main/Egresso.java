@@ -1,4 +1,6 @@
+package main;
 import javax.swing.*;
+
 import java.util.Date;
 
 public class Egresso extends Aluno{
