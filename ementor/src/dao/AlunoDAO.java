@@ -76,7 +76,7 @@ public class AlunoDAO {
             e.printStackTrace();
         }
     }
-    public Aluno buscar(String matricula){
+    /**public Aluno buscar(String matricula){
         String sql = "SELECT * FROM aluno WHERE matricula = ?";
         try (Connection connection = database.Conexao.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -95,5 +95,5 @@ public class AlunoDAO {
         }
         return null;
     
-    }
+    }*/
 }
