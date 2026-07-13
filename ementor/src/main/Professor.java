@@ -35,6 +35,27 @@ public class Professor extends Pessoa {
         return salarioBruto;
     }
 
+    public boolean getCargoChefia(){
+        return cargoChefia;
+    }
+
+    public boolean getCargoCoordenacao(){
+        return cargoCoordenacao;
+    }
+
+    public void setSalarioBruto(double salarioBruto) {
+        this.salarioBruto = salarioBruto;
+    }
+    public void setCargoChefia(boolean cargoChefia) {
+        this.cargoChefia = cargoChefia;
+    }
+    public void setCargoCoordenacao(boolean cargoCoordenacao) {
+        this.cargoCoordenacao = cargoCoordenacao;
+    }
+    public void setDataAdmissao(Date dataAdmissao) {
+        this.dataAdmissao = dataAdmissao;
+    }
+
     public void imprimirDadosProfessor() {
         System.out.println("Nome: " + nome);
         System.out.println("Data de Nascimento: " + nascimento);

@@ -11,28 +11,24 @@ import java.util.ArrayList;
 import main.Pessoa;
 
 public class PessoaDAO {    
-    public void inserir(Pessoa pessoa) {
-        String sql = "INSERT INTO pessoa (nome, nascimento, cpf, telefone, rua, bairro, cidade, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        try (Connection connection = database.Conexao.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, pessoa.getNome());
-            statement.setDate(2, new java.sql.Date(pessoa.getNascimento().getTime()));
-            statement.setString(3, pessoa.getCpf());
+    public void inserir(Connection connection, Pessoa pessoa) throws SQLException {
+        String sql = "INSERT INTO pessoa (cpf, nome, nascimento, telefone, rua, bairro, cidade, estado) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, pessoa.getCpf());
+            statement.setString(2, pessoa.getNome());
+            statement.setDate(3, new java.sql.Date(pessoa.getNascimento().getTime()));
             statement.setString(4, pessoa.getTelefone());
             statement.setString(5, pessoa.getRua());
             statement.setString(6, pessoa.getBairro());
             statement.setString(7, pessoa.getCidade());
             statement.setString(8, pessoa.getEstado());
             statement.executeUpdate();
-            System.out.println("Pessoa salva com sucesso no banco de dados!");
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+        
     }
-    public void atualizar(Pessoa pessoa) {
+    public void atualizar(Connection connection, Pessoa pessoa) throws SQLException{
         String sql = "UPDATE pessoa SET telefone = ?, rua = ?, bairro = ?, cidade = ?, estado = ? WHERE cpf = ?";
-        try (Connection connection = database.Conexao.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, pessoa.getTelefone());
             statement.setString(2, pessoa.getRua());
             statement.setString(3, pessoa.getBairro());
@@ -50,10 +46,9 @@ public class PessoaDAO {
         }
     }
 
-    public void remover(String cpf) {
+    public void remover(Connection connection, String cpf) throws SQLException {
         String sql = "DELETE FROM pessoa WHERE cpf = ?";
-        try (Connection connection = database.Conexao.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, cpf);
             int rowsDeleted = statement.executeUpdate();
             if (rowsDeleted > 0) {
@@ -66,10 +61,9 @@ public class PessoaDAO {
         }
     }
 
-    public Pessoa buscar(String cpf){
+    public Pessoa buscar(Connection connection, String cpf){
         String sql = "SELECT * FROM pessoa WHERE cpf = ?";
-        try (Connection connection = database.Conexao.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, cpf);
             var resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -109,7 +103,7 @@ public class PessoaDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Retorna null se não houver pessoas cadastradas
+        return pessoas;
     }
 }
 

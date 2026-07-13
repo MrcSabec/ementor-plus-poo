@@ -50,4 +50,37 @@ public class Pessoa {
     public String getEstado() {
         return estado;
     }
+
+    public void setNome(String nome){
+        this.nome = nome;
+    }
+
+    public void setNascimento(Date nascimento){
+        this.nascimento = nascimento;
+    }
+
+    public void setCpf(String cpf){
+        this.cpf = cpf;
+    }
+
+    public void setTelefone(String telefone){
+        this.telefone = telefone;
+    }
+    
+    public void setRua(String rua){
+        this.rua = rua;
+    }
+
+    public void setBairro(String bairro){
+        this.bairro = bairro;
+    }
+
+    public void setEstado(String estado){
+        this.estado = estado;
+    }
+
+    public void setCidade(String cidade){
+        this.cidade = cidade;
+    }
+
 }

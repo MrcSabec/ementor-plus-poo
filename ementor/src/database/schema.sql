@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `aluno`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `aluno` (
   `cpf_pessoa` char(11) NOT NULL,
-  `matricula` bigint NOT NULL,
+  `matricula` varchar(10) NOT NULL,
   `periodo` int NOT NULL,
   `codigo_turma` varchar(20) NOT NULL,
   `nota1` decimal(4,2) DEFAULT NULL,
@@ -53,13 +53,13 @@ DROP TABLE IF EXISTS `egresso`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `egresso` (
-  `profissao_atual` varchar(100) NOT NULL,
-  `faixa_salarial` decimal(10,2) DEFAULT NULL,
+  `matricula` varchar(10) NOT NULL,
+  `profissao_atual` varchar(100) DEFAULT NULL,
+  `faixa_salarial` double DEFAULT NULL,
   `curso_anterior` varchar(100) DEFAULT NULL,
   `curso_atual` varchar(100) DEFAULT NULL,
-  `cpf_pessoa` char(11) NOT NULL,
-  KEY `fk_egresso_pessoa` (`cpf_pessoa`),
-  CONSTRAINT `fk_egresso_pessoa` FOREIGN KEY (`cpf_pessoa`) REFERENCES `pessoa` (`cpf`)
+  PRIMARY KEY (`matricula`),
+  CONSTRAINT `fk_egresso_aluno` FOREIGN KEY (`matricula`) REFERENCES `aluno` (`matricula`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -140,4 +140,4 @@ CREATE TABLE `usuario` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-10 14:32:13
+-- Dump completed on 2026-07-12 23:37:37

@@ -29,6 +29,37 @@ public class Egresso extends Aluno{
         this.cursoAnterior = cursoAnterior;
         this.cursoAtual = cursoAtual;
     }
+
+    public String getProfissaoAtual() {
+        return profissaoAtual;
+    }
+
+    public double getFaixaSalarial() {
+        return faixaSalarial;
+    }
+
+    public String getCursoAnterior() {
+        return cursoAnterior;
+    }
+
+    public String getCursoAtual() {
+        return cursoAtual;
+    }
+
+    public void setProfissaoAtual(String profissaoAtual) {
+        this.profissaoAtual = profissaoAtual;
+    }
+
+    public void setFaixaSalarial(double faixaSalarial) {
+        this.faixaSalarial = faixaSalarial;
+    }
+
+    public void setCursoAnterior(String cursoAnterior) {
+        this.cursoAnterior = cursoAnterior;
+    }
+    public void setCursoAtual(String cursoAtual) {
+        this.cursoAtual = cursoAtual;
+    }
     @Override
     public void imprimirDados(){
         String texto = "Dados Aluno:\n" + "Nome: " + this.nome + "\n" +  "CPF: " + this.cpf + "\n" +  "Telefone: " + this.telefone  + "\n" + "Cidade/Estado: " + this.cidade + "/" + this.estado + "\n"
