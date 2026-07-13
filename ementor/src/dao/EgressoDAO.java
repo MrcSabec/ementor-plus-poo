@@ -267,8 +267,8 @@ public class EgressoDAO {
         return alunos;
     }
 
-    public ArrayList <Aluno> listarPorTurma(String codigo_turma){
-        ArrayList <Aluno> alunosTurma = new ArrayList<>();
+    public ArrayList <Egresso> listarPorTurma(String codigo_turma){
+        ArrayList <Egresso> egressoTurma = new ArrayList<>();
 
         String sql = """
                 SELECT * 
@@ -290,7 +290,7 @@ public class EgressoDAO {
             throw new RuntimeException("Erro ao listar egressos de uma turma", e);
         }
 
-        return alunosTurma;
+        return egressoTurma;
     }
     
     private String buscarCpfPorMatricula(Connection connection, String matricula)
