@@ -7,10 +7,8 @@ public class Professor extends Pessoa {
     private double salarioBruto;
     
     public Professor() {
-        // Construtor padrão
     }
 
-    //Construtor para iniciar todos os atributos da classe Professor, incluindo os atributos herdados da classe Pessoa
     public Professor(String nome, Date nascimento, String cpf, String telefone, String rua, String bairro, String cidade, String estado,
                      Date dataAdmissao, boolean cargoChefia, boolean cargoCoordenacao, double salarioBruto) {
         super(nome, nascimento, cpf, telefone, rua, bairro, cidade, estado);
@@ -71,12 +69,12 @@ public class Professor extends Pessoa {
     public void calcularSalarioBruto(){
         double salarioFinal = salarioBruto;
 
-        // Aplicando aumento de 10% para cargo de chefia
+        // Adicional de chefia (10%)
         if (cargoChefia) {
             salarioFinal += salarioBruto * 0.10;
         }
 
-        // Aplicando aumento de 5% para cargo de coordenação
+        // Adicional de coordenação (5%)
         if (cargoCoordenacao) {
             salarioFinal += salarioBruto * 0.05;
         }
@@ -87,12 +85,12 @@ public class Professor extends Pessoa {
     public void calcularSalarioLiquido() {
         double salarioLiquido = salarioBruto;
 
-        //desconto de 22,5% para IRRF
+        // Desconto de IRRF (22,5%) para faixa salarial aplicável
         if(salarioBruto >= 5000) {
             salarioLiquido -= salarioBruto * 0.225;
         }
 
-        // Aplicando desconto de 14% para INSS
+        // Desconto de INSS (14%)
         salarioLiquido -= salarioBruto * 0.14;
 
         System.out.println("Salário Líquido: R$" + salarioLiquido);
@@ -102,12 +100,12 @@ public class Professor extends Pessoa {
         double salarioFinalBruto = salarioBruto;
         double salarioLiquido = salarioFinalBruto;
 
-        // Desconto de 22,5% para IRRF se maior que 5000
+        // Desconto de IRRF (22,5%) para salários iguais ou superiores a R$5.000,00
         if(salarioFinalBruto >= 5000) {
             salarioLiquido -= salarioFinalBruto * 0.225;
         }
 
-        // Aplicando desconto de 14% para INSS
+        // Desconto de INSS (14%)
         salarioLiquido -= salarioFinalBruto * 0.14;
 
         return salarioLiquido;

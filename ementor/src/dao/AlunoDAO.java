@@ -25,7 +25,6 @@ public class AlunoDAO {
     }
 
 
-    //Função responsavel por inserir um aluno no banco de dados
     public void inserir(Aluno aluno) {
         Connection connection = null;
         try {
@@ -86,7 +85,6 @@ public class AlunoDAO {
         }
     }
 
-    //Funcao responsavel por alterar os dados de um aluno do banco de dados, atraves da matricula informada no aluno
     public void alterar(Connection connection, Aluno aluno){
         try{
             connection = Conexao.getConnection();
@@ -289,7 +287,6 @@ public class AlunoDAO {
             connection = Conexao.getConnection();
             connection.setAutoCommit(false);
 
-            // Atualiza para a turma placeholder '000' em vez de NULL
             String sql = "UPDATE aluno SET codigo_turma = '000' WHERE matricula = ?";
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1, matricula);
@@ -373,21 +370,18 @@ public class AlunoDAO {
     }
 
     public void remover(Connection connection, String matricula) throws SQLException {
-        // Primeiro descobrir o CPF do aluno
         String cpf = buscarCpfPorMatricula(connection, matricula);
 
         if (cpf == null) {
             throw new RuntimeException("Aluno não encontrado.");
         }
 
-        // Remove da tabela aluno
         String sql = "DELETE FROM aluno WHERE matricula = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, matricula);
             statement.executeUpdate();
         }
 
-        // Remove da tabela pessoa
         PessoaDAO pessoaDAO = new PessoaDAO();
         pessoaDAO.remover(connection, cpf);
     }

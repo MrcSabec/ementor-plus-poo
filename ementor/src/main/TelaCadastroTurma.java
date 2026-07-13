@@ -14,7 +14,7 @@ public class TelaCadastroTurma extends JFrame {
 
     public TelaCadastroTurma() {
         setTitle("eMentor-Plus - Cadastrar Turma");
-        setSize(500, 400); // Tamanho compacto pois são só 2 campos
+        setSize(500, 400); // Configuração de dimensão
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -34,7 +34,7 @@ public class TelaCadastroTurma extends JFrame {
 
         JPanel painelCentralizador = new JPanel(new GridBagLayout());
 
-        // Define o layout do painel de formulário
+        // Configuração do LayoutManager
         JPanel painelFormulario = new JPanel(new GridLayout(2, 2, 10, 10));
         Font fontePadrao = new Font("Segoe UI", Font.PLAIN, 18);
 
@@ -78,7 +78,7 @@ public class TelaCadastroTurma extends JFrame {
         add(painelBotoes, BorderLayout.SOUTH);
 
         // ==========================================
-        // AÇÕES DOS BOTÕES
+        // Listeners de eventos
         // ==========================================
         btnVoltar.addActionListener(new ActionListener() {
             @Override

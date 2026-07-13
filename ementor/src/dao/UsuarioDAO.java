@@ -63,7 +63,7 @@ public class UsuarioDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return -1; // Retorna -1 se o usuário não for encontrado
+        return -1;
     }
 
     public void excluir(int id) {

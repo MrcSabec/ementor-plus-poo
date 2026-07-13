@@ -27,7 +27,7 @@ public class TelaNotasAluno extends JFrame {
         setLayout(new BorderLayout());
 
         // ==========================================
-        // TOPO: LOGO E TÍTULO
+        // Componentes do painel superior
         // ==========================================
         JPanel painelTopo = new JPanel(new BorderLayout());
         painelTopo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
@@ -56,7 +56,7 @@ public class TelaNotasAluno extends JFrame {
         add(painelTopo, BorderLayout.NORTH);
 
         // ==========================================
-        // CENTRO: FORMULÁRIO DE NOTAS
+        // Componentes do painel central
         // ==========================================
         JPanel painelCentralizador = new JPanel(new GridBagLayout());
 
@@ -83,7 +83,7 @@ public class TelaNotasAluno extends JFrame {
         add(painelCentralizador, BorderLayout.CENTER);
 
         // ==========================================
-        // SUL: BOTÕES DE AÇÃO
+        // Componentes do painel inferior
         // ==========================================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 

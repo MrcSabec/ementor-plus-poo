@@ -62,7 +62,6 @@ public class TurmaDAO {
             
             String sql = "UPDATE turma SET nome = ? WHERE codigo = ?";
 
-            //atualização dos campos
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setString(1,turma.getNome());
                 statement.setString(2,turma.getCodigo());
@@ -212,7 +211,6 @@ public class TurmaDAO {
                 turma.setCodigo(rs.getString("codigo"));
                 turma.setNome(rs.getString("nome"));
                 
-                // Popula a lista de alunos para que a tela possa usar .size()
                 turma.setAlunos(alunoDAO.listarPorTurma(turma.getCodigo()));
 
                 turmas.add(turma);

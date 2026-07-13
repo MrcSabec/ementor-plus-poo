@@ -17,7 +17,6 @@ public class Aluno extends Pessoa{
     }
     public void setDados(String nome, Date dataNascimento, String cpf, String telefone, String rua, String bairro, String cidade, String estado,
                          String matricula, int periodo, Turma turma, double[] notas){
-        //Classe Pessoa
         this.nome = nome;
         this.nascimento = dataNascimento;
         this.cpf = cpf;
@@ -26,7 +25,6 @@ public class Aluno extends Pessoa{
         this.bairro = bairro;
         this.cidade = cidade;
         this.estado = estado;
-        //Classe Aluno
         this.matricula = matricula;
         this.periodo = periodo;
         this.turma = turma;

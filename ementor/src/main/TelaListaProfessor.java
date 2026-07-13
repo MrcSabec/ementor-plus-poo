@@ -19,7 +19,7 @@ public class TelaListaProfessor extends JFrame {
         setLayout(new BorderLayout());
 
         // ==========================================
-        // TOPO: LOGO E TÍTULO
+        // Componentes do painel superior
         // ==========================================
         JPanel painelTopo = new JPanel(new BorderLayout());
         painelTopo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
@@ -38,7 +38,7 @@ public class TelaListaProfessor extends JFrame {
         add(painelTopo, BorderLayout.NORTH);
 
         // ==========================================
-        // CENTRO: A TABELA (JTable)
+        // Componentes do painel central
         // ==========================================
         String[] colunas = {"CPF", "Nome", "Data Admissão", "Chefia?", "Coordenação?", "Salário Bruto", "Salário Líquido"};
 
@@ -91,7 +91,7 @@ public class TelaListaProfessor extends JFrame {
         }
 
         // ==========================================
-        // SUL: BOTÕES DE AÇÃO
+        // Componentes do painel inferior
         // ==========================================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 

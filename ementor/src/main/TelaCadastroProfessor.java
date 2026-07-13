@@ -17,7 +17,7 @@ public class TelaCadastroProfessor extends JFrame {
         setLayout(new BorderLayout());
 
         // ==========================================
-        // TOPO: LOGO E TÍTULO
+        // Componentes do painel superior
         // ==========================================
         JPanel painelTopo = new JPanel(new BorderLayout());
         painelTopo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
@@ -36,7 +36,7 @@ public class TelaCadastroProfessor extends JFrame {
         add(painelTopo, BorderLayout.NORTH);
 
         // ==========================================
-        // CENTRO: FORMULÁRIO (Herança e Cálculos)
+        // Componentes do painel central
         // ==========================================
         JPanel painelCentralizador = new JPanel(new GridBagLayout());
         JPanel painelFormulario = new JPanel(new GridLayout(15, 2, 10, 8));
@@ -88,7 +88,7 @@ public class TelaCadastroProfessor extends JFrame {
         add(scrollFormulario, BorderLayout.CENTER);
 
         // ==========================================
-        // SUL: BOTÕES DE AÇÃO COM ÍCONES
+        // Componentes do painel inferior
         // ==========================================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 

@@ -37,15 +37,12 @@ public class EgressoDAO {
         }
     }
 
-    //Função responsavel por inserir um egresso no banco de dados
-    //CONSIDERE QUE COMO ELE FOI ELEITO A EGRESSO, JÁ EXISTE UM ALUNO E UMA PESSOA CADASTRADA PARA ELE!!!
     public void inserir(Egresso egresso) {
         Connection connection = null;
         try {
             connection = Conexao.getConnection();
             connection.setAutoCommit(false);
             
-            // 1. Verifica e Upsert Pessoa
             PessoaDAO pessoaDAO = new PessoaDAO();
             if (pessoaDAO.buscar(connection, egresso.getCpf()) != null) {
                 pessoaDAO.atualizar(connection, egresso);
@@ -53,7 +50,6 @@ public class EgressoDAO {
                 pessoaDAO.inserir(connection, egresso);
             }
 
-            // 2. Verifica e Upsert Aluno
             AlunoDAO alunoDAO = new AlunoDAO();
             if (alunoDAO.existe(connection, egresso.getMatricula())) {
                 String sqlAluno = "UPDATE aluno SET periodo = ?, codigo_turma = ? WHERE matricula = ?";
@@ -67,7 +63,6 @@ public class EgressoDAO {
                 alunoDAO.inserir(connection, egresso);
             }
 
-            // 3. Verifica e Upsert Egresso
             if (existe(connection, egresso.getCpf())) {
                 String sqlEgresso = "UPDATE egresso SET profissao_atual = ?, faixa_salarial = ?, curso_anterior = ?, curso_atual = ? WHERE cpf_pessoa = ?";
                 try (PreparedStatement statement = connection.prepareStatement(sqlEgresso)) {
@@ -118,7 +113,6 @@ public class EgressoDAO {
             }
         }
     }
-    //Funcao responsavel por alterar os dados de um aluno do banco de dados, atraves da matricula informada no aluno
     public void alterar(Egresso egresso){
         Connection connection = null;
         try{
@@ -323,21 +317,18 @@ public class EgressoDAO {
         try {
             connection = Conexao.getConnection();
             connection.setAutoCommit(false);
-            // Primeiro descobrir o CPF do egresso
             String cpf = buscarCpfPorMatricula(connection, matricula);
 
             if (cpf == null) {
                 throw new RuntimeException("egresso não encontrado.");
             }
 
-            // Remove da tabela egresso
             String sqlEgresso = "DELETE FROM egresso WHERE cpf_pessoa = ?";
             try (PreparedStatement stmtEgresso = connection.prepareStatement(sqlEgresso)) {
                 stmtEgresso.setString(1, cpf);
                 stmtEgresso.executeUpdate();
             }
 
-            // A remoção de Aluno também remove de Pessoa em cascata internamente!
             AlunoDAO alunoDAO = new AlunoDAO();
             alunoDAO.remover(connection, matricula);
 

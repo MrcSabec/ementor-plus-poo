@@ -11,44 +11,35 @@ public class MenuPrincipal extends JFrame {
 
     public MenuPrincipal() {
         setTitle("eMentor-Plus - Menu Principal");
-        setSize(800, 850); // Altura aumentada para os botões respirarem
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Encerra o sistema ao fechar
+        setSize(800, 850);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // ==========================================
-        // TOPO: TÍTULO DO MENU
-        // ==========================================
+        // Componentes do painel superior
         JPanel painelTopo = new JPanel(new BorderLayout());
         painelTopo.setBorder(BorderFactory.createEmptyBorder(0, -20, 0, 0));
 
-        // Carregando e redimensionando a logo principal
+        // Carregamento e redimensionamento da logomarca
         try {
             ImageIcon iconeLogo = new ImageIcon(getClass().getResource("/imagens/logo.png"));
 
-            // Redimensionamento da logo
             Image imgLogo = iconeLogo.getImage().getScaledInstance(388, 213, Image.SCALE_SMOOTH);
             JLabel lblLogo = new JLabel(new ImageIcon(imgLogo));
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
 
-            // Adicionando a logo ao painel
             painelTopo.add(lblLogo, BorderLayout.CENTER);
 
         } catch (Exception ex) {
             System.out.println("Erro ao carregar a logo do topo.");
         }
 
-        // Finalmente, adiciona o painel completo no NORTE da janela principal
         add(painelTopo, BorderLayout.NORTH);
 
-        // ==========================================
-        // CENTRO: GRADE DE BOTÕES (4x3)
-        // ==========================================
-        // Define o layout do painel de botões: 4 linhas (entidades) e 3 colunas (operações)
-        JPanel painelBotoes = new JPanel(new GridLayout(4, 3, 20, 20)); // Espaçamento aumentado
+        // Componentes do painel central (Grade de operações)
+        JPanel painelBotoes = new JPanel(new GridLayout(4, 3, 20, 20));
         painelBotoes.setBorder(BorderFactory.createEmptyBorder(20, 30, 30, 30));
 
-        // Criação dos botões de ação
         JButton btnCadAluno = criarBotaoMenu("Cadastrar Aluno", "/imagens/cad_aluno.png");
         JButton btnListarAluno = criarBotaoMenuLST("Listar Aluno", "/imagens/list_aluno.png");
         JButton btnAlterarAluno = criarBotaoMenuALT("Alterar Aluno", "/imagens/alt_aluno.png");
@@ -66,36 +57,30 @@ public class MenuPrincipal extends JFrame {
         JButton btnListarTurma = criarBotaoMenuLST("Listar Turma", "/imagens/list_turma.png");
         JButton btnAlterarTurma = criarBotaoMenuALT("Alterar Turma", "/imagens/alt_turma.png");
         
-        // Linha 1: Aluno
         painelBotoes.add(btnCadAluno);
         painelBotoes.add(btnListarAluno);
         painelBotoes.add(btnAlterarAluno);
 
-        // Linha 2: Egresso
         painelBotoes.add(btnCadEgresso);
         painelBotoes.add(btnListarEgresso);
         painelBotoes.add(btnAlterarEgresso);
 
-        // Linha 3: Professor
         painelBotoes.add(btnCadProfessor);
         painelBotoes.add(btnListarProfessor);
         painelBotoes.add(btnAlterarProfessor);
 
-        // Linha 4: Turma
         painelBotoes.add(btnCadTurma);
         painelBotoes.add(btnListarTurma);
         painelBotoes.add(btnAlterarTurma);
 
         add(painelBotoes, BorderLayout.CENTER);
 
-        // ==========================================
-        // RODAPÉ: BOTÃO GERAR RELATÓRIO PDF
-        // ==========================================
+        // Componentes do painel inferior
         JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         painelRodape.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 30));
         JButton btnGerarRelatorio = new JButton("Gerar Relatório (PDF)");
         btnGerarRelatorio.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnGerarRelatorio.setBackground(new Color(220, 53, 69)); // Vermelho para destacar PDF
+        btnGerarRelatorio.setBackground(new Color(220, 53, 69));
         btnGerarRelatorio.setForeground(Color.WHITE);
         
         try {
@@ -108,13 +93,10 @@ public class MenuPrincipal extends JFrame {
         painelRodape.add(btnGerarRelatorio);
         add(painelRodape, BorderLayout.SOUTH);
 
-        // ==========================================
-        // AÇÕES DOS BOTÕES (Exemplo do Cadastrar Aluno)
-        // ==========================================
+        // Configuração dos eventos de ação dos botões
         btnCadAluno.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Aqui você vai instanciar a próxima tela
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Cadastrar Aluno...");
                 dispose();
                 TelaCadastroAluno telaCad = new TelaCadastroAluno();
@@ -125,7 +107,6 @@ public class MenuPrincipal extends JFrame {
         btnListarAluno.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Aqui você vai instanciar a próxima tela
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Lista dos Alunos...");
                 dispose();
                 TelaListaAluno telaList = new TelaListaAluno();
@@ -135,7 +116,6 @@ public class MenuPrincipal extends JFrame {
         btnAlterarAluno.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Aqui você vai instanciar a próxima tela
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Edição de Alunos...");
                 dispose();
                 TelaAlterarAluno telaAltera = new TelaAlterarAluno();
@@ -145,7 +125,6 @@ public class MenuPrincipal extends JFrame {
         btnCadEgresso.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Aqui você vai instanciar a próxima tela
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Cadastrar Egresso...");
                 dispose();
                 TelaCadastroEgresso telaCad = new TelaCadastroEgresso();
@@ -233,9 +212,7 @@ public class MenuPrincipal extends JFrame {
             }
         });
 
-        // ==========================================
-        // AÇÃO: GERAR RELATÓRIO PDF
-        // ==========================================
+        // Evento de geração do relatório PDF
         btnGerarRelatorio.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -306,16 +283,13 @@ public class MenuPrincipal extends JFrame {
     }
 
 
-    // ==========================================
-        // Método auxiliar para criar botões de menu
-    // ==========================================
+    // Métodos auxiliares para criação de botões
     private JButton criarBotaoMenu(String texto, String caminhoIcone) {
         JButton botao = new JButton(texto);
         botao.setFont(new Font("Segoe UI", Font.BOLD, 16));
         botao.setBackground(new Color(240, 248, 255));
         botao.setFocusPainted(false);
 
-        // Configuração de texto e ícone
         botao.setHorizontalTextPosition(SwingConstants.CENTER);
         botao.setVerticalTextPosition(SwingConstants.BOTTOM);
 

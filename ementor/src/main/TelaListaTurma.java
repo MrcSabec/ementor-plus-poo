@@ -34,7 +34,7 @@ public class TelaListaTurma extends JFrame {
         add(painelTopo, BorderLayout.NORTH);
 
         // ==========================================
-        // CENTRO: TABELA
+        // Componentes do painel central
         // ==========================================
         String[] colunas = {"Código da Turma", "Nome da Turma", "Quantidade de Alunos"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
@@ -62,7 +62,7 @@ public class TelaListaTurma extends JFrame {
         carregarDados();
 
         // ==========================================
-        // SUL: BOTÕES DE AÇÃO
+        // Componentes do painel inferior
         // ==========================================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 

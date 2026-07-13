@@ -1,12 +1,11 @@
 package main;
 public class Usuario extends Pessoa {
-    private int id; // Adicione o campo id
+    private int id;
     private String nomeUsuario;
     private String senha;
-    private NivelAcesso nivelAcesso; // 1 - Administrador, 2 - Professor, 3 - Aluno
+    private NivelAcesso nivelAcesso; // 1: Administrador, 2: Professor, 3: Aluno
 
     public Usuario() {
-        // Construtor padrão
     }
 
     public void setDadosUsuario(String nomeUsuario, String senha, NivelAcesso nivelAcesso) {

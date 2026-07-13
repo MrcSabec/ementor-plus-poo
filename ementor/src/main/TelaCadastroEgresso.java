@@ -25,7 +25,7 @@ public class TelaCadastroEgresso extends JFrame {
 
 
 
-        // TOPO: LOGO E TÍTULO
+        // Componentes do painel superior
         JPanel painelTopo = new JPanel(new BorderLayout());
         painelTopo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         
@@ -44,7 +44,7 @@ public class TelaCadastroEgresso extends JFrame {
         painelTopo.add(lblTitulo, BorderLayout.SOUTH);
         add(painelTopo, BorderLayout.NORTH);
 
-        // CENTRO: FORMULÁRIO COMPLETO
+        // Componentes do painel central
         JPanel painelCentralizador = new JPanel(new GridBagLayout());
 
         JPanel painelFormulario = new JPanel(new GridLayout(15, 2, 10, 8));
@@ -106,7 +106,7 @@ public class TelaCadastroEgresso extends JFrame {
         scrollFormulario.setBorder(null);
         add(scrollFormulario, BorderLayout.CENTER);
 
-        // SUL: BOTÕES DE AÇÃO
+        // Componentes do painel inferior
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 
         JButton btnVoltar = new JButton("Voltar");

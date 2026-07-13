@@ -11,7 +11,7 @@ public class TelaCadastroAluno extends JFrame {
 
     public TelaCadastroAluno() {
         setTitle("eMentor-Plus - Cadastrar Aluno");
-        setSize(600, 750); // Define o tamanho da janela
+        setSize(600, 750); // Configuração de dimensão
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -31,7 +31,7 @@ public class TelaCadastroAluno extends JFrame {
 
         JPanel painelCentralizador = new JPanel(new GridBagLayout());
 
-        // Define o layout do painel de formulário
+        // Configuração do LayoutManager
         JPanel painelFormulario = new JPanel(new GridLayout(11, 2, 10, 10));
         Font fontePadrao = new Font("Segoe UI", Font.PLAIN, 18);
 
@@ -111,7 +111,7 @@ public class TelaCadastroAluno extends JFrame {
         add(painelBotoes, BorderLayout.SOUTH);
 
         // ==========================================
-        // AÇÕES DOS BOTÕES
+        // Listeners de eventos
         // ==========================================
         btnVoltar.addActionListener(new ActionListener() {
             @Override

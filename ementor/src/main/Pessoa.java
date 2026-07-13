@@ -10,11 +10,9 @@ public class Pessoa {
     protected String cidade;
     protected String estado;
 
-    public Pessoa(){
-        // Construtor padrão
+    public Pessoa() {
     }
 
-    // Construtor da classe Pessoa
     public Pessoa(String nome, Date nascimento, String cpf, String telefone, String rua, String bairro, String cidade, String estado) {
         this.nome = nome;
         this.nascimento = nascimento;

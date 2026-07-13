@@ -37,7 +37,7 @@ public class TelaAlterarAluno extends JFrame {
             System.out.println("Erro ao carregar lista de alunos: " + ex.getMessage());
         }
 
-        // TOPO: LOGO E BARRA DE BUSCA
+        // Componentes do painel superior
         JPanel painelTopo = new JPanel(new BorderLayout());
 
         // Logo
@@ -83,7 +83,7 @@ public class TelaAlterarAluno extends JFrame {
         painelTopo.add(painelBusca, BorderLayout.CENTER);
         add(painelTopo, BorderLayout.NORTH);
 
-        // CENTRO: FORMULÁRIO DE EDIÇÃO
+        // Componentes do painel central
         JPanel painelCentralizador = new JPanel(new GridBagLayout());
         JPanel painelFormulario = new JPanel(new GridLayout(10, 2, 10, 10));
         painelFormulario.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
@@ -169,7 +169,7 @@ public class TelaAlterarAluno extends JFrame {
         painelCentralizador.add(painelCentroGlobal);
         add(painelCentralizador, BorderLayout.CENTER);
 
-        // SUL: NAVEGAÇÃO E AÇÕES
+        // Componentes do painel inferior
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 20));
 
         JButton btnAnterior = new JButton("<< Anterior");

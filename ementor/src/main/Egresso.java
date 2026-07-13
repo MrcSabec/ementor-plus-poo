@@ -21,9 +21,8 @@ public class Egresso extends Aluno{
     public void setDados(String nome, Date dataNascimento, String cpf, String telefone, String rua, String bairro, String cidade, String estado,
                          String matricula, int periodo, Turma turma, double[] notas,
                          String profissaoAtual, double faixaSalarial, String cursoAnterior, String cursoAtual){
-        //Classe Pessoa + Aluno
         super.setDados( nome,  dataNascimento,  cpf,  telefone,  rua,  bairro,  cidade,  estado, matricula,  periodo,  turma, notas);
-        //Classe Egresso
+
         this.profissaoAtual = profissaoAtual;
         this.faixaSalarial = faixaSalarial;
         this.cursoAnterior = cursoAnterior;

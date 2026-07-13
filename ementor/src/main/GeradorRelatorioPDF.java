@@ -29,13 +29,13 @@ public class GeradorRelatorioPDF {
             PdfWriter.getInstance(document, new FileOutputStream(caminhoArquivo));
             document.open();
 
-            // Fontes padronizadas
+            // Configuração de fontes do documento
             Font fonteTitulo = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
             Font fonteSubTitulo = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
             Font fonteNormal = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
             Font fonteNegrito = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
 
-            // Cabeçalho Principal
+            // Geração do cabeçalho principal
             Paragraph titulo = new Paragraph("Relatório Geral - eMentor-Plus", fonteTitulo);
             titulo.setAlignment(Element.ALIGN_CENTER);
             titulo.setSpacingAfter(20);
@@ -47,9 +47,7 @@ public class GeradorRelatorioPDF {
             dataGeracao.setSpacingAfter(30);
             document.add(dataGeracao);
 
-            // ==========================================
-            // SESSÃO 1: TURMAS E ALUNOS (E EGRESSOS)
-            // ==========================================
+            // Seção: Turmas, Alunos e Egressos
             Paragraph subTurmas = new Paragraph("1. Turmas e Alunos Vinculados", fonteSubTitulo);
             subTurmas.setSpacingAfter(15);
             document.add(subTurmas);
@@ -67,33 +65,55 @@ public class GeradorRelatorioPDF {
 
                     List<Aluno> alunos = turma.getAlunos();
                     if (alunos != null && !alunos.isEmpty()) {
-                        PdfPTable tabelaAlunos = new PdfPTable(4);
+                        PdfPTable tabelaAlunos = new PdfPTable(6);
                         tabelaAlunos.setWidthPercentage(100);
-                        tabelaAlunos.setWidths(new float[]{1.5f, 3f, 4f, 1f});
+                        tabelaAlunos.setWidths(new float[]{1.5f, 2.5f, 1.2f, 2f, 3f, 1f});
                         tabelaAlunos.setSpacingBefore(5);
                         tabelaAlunos.setSpacingAfter(15);
 
-                        // Cabeçalhos da Tabela
+                        // Configuração do cabeçalho da tabela de alunos
                         PdfPCell cellMatricula = new PdfPCell(new Phrase("Matrícula", fonteNegrito));
                         PdfPCell cellNome = new PdfPCell(new Phrase("Nome do Aluno", fonteNegrito));
+                        PdfPCell cellEgresso = new PdfPCell(new Phrase("Egresso?", fonteNegrito));
+                        PdfPCell cellAtributo = new PdfPCell(new Phrase("Profissão/Curso", fonteNegrito));
                         PdfPCell cellNotas = new PdfPCell(new Phrase("Notas (N1-N10)", fonteNegrito));
                         PdfPCell cellMedia = new PdfPCell(new Phrase("Média", fonteNegrito));
                         
                         cellMatricula.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
                         cellNome.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                        cellEgresso.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                        cellAtributo.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
                         cellNotas.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
                         cellMedia.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
 
                         tabelaAlunos.addCell(cellMatricula);
                         tabelaAlunos.addCell(cellNome);
+                        tabelaAlunos.addCell(cellEgresso);
+                        tabelaAlunos.addCell(cellAtributo);
                         tabelaAlunos.addCell(cellNotas);
                         tabelaAlunos.addCell(cellMedia);
+
+                        dao.EgressoDAO egressoDAO = new dao.EgressoDAO();
 
                         for (Aluno aluno : alunos) {
                             tabelaAlunos.addCell(new Phrase(aluno.getMatricula(), fonteNormal));
                             tabelaAlunos.addCell(new Phrase(aluno.getNome(), fonteNormal));
                             
-                            // Monta String de Notas e Calcula Média
+                            // Validação do status de egresso do aluno
+                            main.Egresso egresso = egressoDAO.buscar(aluno.getMatricula());
+                            if (egresso != null) {
+                                tabelaAlunos.addCell(new Phrase("Sim", fonteNormal));
+                                String atributoExclusivo = egresso.getProfissaoAtual();
+                                if (atributoExclusivo == null || atributoExclusivo.isEmpty()) {
+                                    atributoExclusivo = egresso.getCursoAtual();
+                                }
+                                tabelaAlunos.addCell(new Phrase(atributoExclusivo, fonteNormal));
+                            } else {
+                                tabelaAlunos.addCell(new Phrase("Não", fonteNormal));
+                                tabelaAlunos.addCell(new Phrase("-", fonteNormal));
+                            }
+                            
+                            // Formatação das notas e cálculo da média
                             double[] notas = aluno.getNotas();
                             double soma = 0;
                             int count = 0;
@@ -101,7 +121,7 @@ public class GeradorRelatorioPDF {
                             
                             if (notas != null) {
                                 for (int i = 0; i < notas.length; i++) {
-                                    if (notas[i] > 0) { // Considerando notas lançadas como > 0
+                                    if (notas[i] > 0) { // Considera apenas notas válidas (maiores que zero)
                                         soma += notas[i];
                                         count++;
                                         notasStr.append(df.format(notas[i]));
@@ -129,12 +149,10 @@ public class GeradorRelatorioPDF {
                 document.add(new Paragraph("Nenhuma turma cadastrada no sistema.", fonteNormal));
             }
 
-            // Quebra de Página para os Professores
+            // Quebra de página para a próxima seção
             document.newPage();
 
-            // ==========================================
-            // SESSÃO 2: PROFESSORES E SALÁRIOS
-            // ==========================================
+            // Seção: Quadro de Professores
             Paragraph subProfessores = new Paragraph("2. Quadro de Professores", fonteSubTitulo);
             subProfessores.setSpacingAfter(15);
             document.add(subProfessores);

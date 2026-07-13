@@ -81,7 +81,7 @@ public class PessoaDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; // Retorna null se a pessoa não for encontrada
+        return null;
     }
 
     public List<Pessoa> listar() {

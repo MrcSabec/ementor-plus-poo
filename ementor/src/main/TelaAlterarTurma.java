@@ -37,7 +37,7 @@ public class TelaAlterarTurma extends JFrame {
         setLayout(new BorderLayout());
 
         // ==========================================
-        // TOPO: LOGO E BUSCA
+        // Componentes do painel superior
         // ==========================================
         JPanel painelTopo = new JPanel(new BorderLayout());
         painelTopo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
@@ -78,7 +78,7 @@ public class TelaAlterarTurma extends JFrame {
         add(painelTopo, BorderLayout.NORTH);
 
         // ==========================================
-        // CENTRO: FORMULÁRIO, NAVEGAÇÃO E TABELA
+        // Componentes do painel central
         // ==========================================
         JPanel painelCentral = new JPanel(new BorderLayout());
         
@@ -152,7 +152,7 @@ public class TelaAlterarTurma extends JFrame {
         add(painelCentral, BorderLayout.CENTER);
 
         // ==========================================
-        // SUL: BOTÕES DE AÇÃO PRINCIPAIS
+        // Componentes do painel inferior
         // ==========================================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 

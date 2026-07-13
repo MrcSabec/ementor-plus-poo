@@ -24,14 +24,11 @@ public class ProfessorDAO {
     }
 
 
-    //Função responsavel por inserir um professor no banco de dados
     public void inserir(Professor professor) {
         Connection connection = null;
         try {
             connection = Conexao.getConnection();
-            // Inicia a transação
             connection.setAutoCommit(false);
-            // 1. Verifica e Upsert Pessoa
             PessoaDAO pessoaDAO = new PessoaDAO();
             if (pessoaDAO.buscar(connection, professor.getCpf()) != null) {
                 pessoaDAO.atualizar(connection, professor);
@@ -39,7 +36,6 @@ public class ProfessorDAO {
                 pessoaDAO.inserir(connection, professor);
             }
 
-            // 2. Verifica e Upsert Professor
             if (existe(connection, professor.getCpf())) {
                 String sqlUpdate = """
                     UPDATE professor 
@@ -100,7 +96,6 @@ public class ProfessorDAO {
             }
         }
     }
-    //Funcao responsavel por alterar os dados de um professor do banco de dados, atraves do cpf
     public void alterar(Professor professor){
         Connection connection = null;
         try{
@@ -231,7 +226,6 @@ public class ProfessorDAO {
             connection = Conexao.getConnection();
             connection.setAutoCommit(false);
 
-            // Remove da tabela professor
             String sql = "DELETE FROM professor WHERE cpf_pessoa = ?";
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -241,7 +235,6 @@ public class ProfessorDAO {
                 statement.executeUpdate();
             }
 
-            // Remove da tabela pessoa
             PessoaDAO pessoaDAO = new PessoaDAO();
             pessoaDAO.remover(connection, cpf);
 
