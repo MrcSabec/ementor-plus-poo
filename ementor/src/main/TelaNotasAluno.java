@@ -167,8 +167,8 @@ public class TelaNotasAluno extends JFrame {
                             Thread.sleep(800);
 
                             // Persistência das notas (DAO)
-                            // AlunoDAO dao = new AlunoDAO();
-                            // dao.atualizarNotas(matricula, valoresLidos);
+                            dao.AlunoDAO dao = new dao.AlunoDAO();
+                            dao.atualizarNotas(matricula, valoresLidos);
 
                             barraProgresso.setValue(100);
                             barraProgresso.setString("Concluído!");

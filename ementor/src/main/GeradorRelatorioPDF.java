@@ -1,0 +1,197 @@
+package main;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import dao.ProfessorDAO;
+import dao.TurmaDAO;
+
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+public class GeradorRelatorioPDF {
+
+    public void gerarRelatorio(String caminhoArquivo) {
+        Document document = new Document();
+        try {
+            PdfWriter.getInstance(document, new FileOutputStream(caminhoArquivo));
+            document.open();
+
+            // Fontes padronizadas
+            Font fonteTitulo = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
+            Font fonteSubTitulo = new Font(Font.FontFamily.HELVETICA, 14, Font.BOLD);
+            Font fonteNormal = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
+            Font fonteNegrito = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+
+            // Cabeçalho Principal
+            Paragraph titulo = new Paragraph("Relatório Geral - eMentor-Plus", fonteTitulo);
+            titulo.setAlignment(Element.ALIGN_CENTER);
+            titulo.setSpacingAfter(20);
+            document.add(titulo);
+
+            SimpleDateFormat formatadorData = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Paragraph dataGeracao = new Paragraph("Gerado em: " + formatadorData.format(new Date()), fonteNormal);
+            dataGeracao.setAlignment(Element.ALIGN_RIGHT);
+            dataGeracao.setSpacingAfter(30);
+            document.add(dataGeracao);
+
+            // ==========================================
+            // SESSÃO 1: TURMAS E ALUNOS (E EGRESSOS)
+            // ==========================================
+            Paragraph subTurmas = new Paragraph("1. Turmas e Alunos Vinculados", fonteSubTitulo);
+            subTurmas.setSpacingAfter(15);
+            document.add(subTurmas);
+
+            TurmaDAO turmaDAO = new TurmaDAO();
+            List<Turma> turmas = turmaDAO.listarTurmas();
+            DecimalFormat df = new DecimalFormat("#,##0.00");
+
+            if (turmas != null && !turmas.isEmpty()) {
+                for (Turma turma : turmas) {
+                    Paragraph pTurma = new Paragraph("Turma: " + turma.getNome() + " (Código: " + turma.getCodigo() + ")", fonteNegrito);
+                    pTurma.setSpacingBefore(10);
+                    pTurma.setSpacingAfter(5);
+                    document.add(pTurma);
+
+                    List<Aluno> alunos = turma.getAlunos();
+                    if (alunos != null && !alunos.isEmpty()) {
+                        PdfPTable tabelaAlunos = new PdfPTable(4);
+                        tabelaAlunos.setWidthPercentage(100);
+                        tabelaAlunos.setWidths(new float[]{1.5f, 3f, 4f, 1f});
+                        tabelaAlunos.setSpacingBefore(5);
+                        tabelaAlunos.setSpacingAfter(15);
+
+                        // Cabeçalhos da Tabela
+                        PdfPCell cellMatricula = new PdfPCell(new Phrase("Matrícula", fonteNegrito));
+                        PdfPCell cellNome = new PdfPCell(new Phrase("Nome do Aluno", fonteNegrito));
+                        PdfPCell cellNotas = new PdfPCell(new Phrase("Notas (N1-N10)", fonteNegrito));
+                        PdfPCell cellMedia = new PdfPCell(new Phrase("Média", fonteNegrito));
+                        
+                        cellMatricula.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                        cellNome.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                        cellNotas.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                        cellMedia.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+
+                        tabelaAlunos.addCell(cellMatricula);
+                        tabelaAlunos.addCell(cellNome);
+                        tabelaAlunos.addCell(cellNotas);
+                        tabelaAlunos.addCell(cellMedia);
+
+                        for (Aluno aluno : alunos) {
+                            tabelaAlunos.addCell(new Phrase(aluno.getMatricula(), fonteNormal));
+                            tabelaAlunos.addCell(new Phrase(aluno.getNome(), fonteNormal));
+                            
+                            // Monta String de Notas e Calcula Média
+                            double[] notas = aluno.getNotas();
+                            double soma = 0;
+                            int count = 0;
+                            StringBuilder notasStr = new StringBuilder();
+                            
+                            if (notas != null) {
+                                for (int i = 0; i < notas.length; i++) {
+                                    if (notas[i] > 0) { // Considerando notas lançadas como > 0
+                                        soma += notas[i];
+                                        count++;
+                                        notasStr.append(df.format(notas[i]));
+                                    } else {
+                                        notasStr.append("-");
+                                    }
+                                    if (i < notas.length - 1) notasStr.append(" | ");
+                                }
+                            }
+                            
+                            Font fonteNotas = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
+                            tabelaAlunos.addCell(new Phrase(notasStr.toString(), fonteNotas));
+                            
+                            String mediaStr = (count > 0) ? df.format(soma / count) : "S/ Nota";
+                            tabelaAlunos.addCell(new Phrase(mediaStr, fonteNormal));
+                        }
+                        document.add(tabelaAlunos);
+                    } else {
+                        Paragraph pVazia = new Paragraph("Nenhum aluno vinculado a esta turma.", fonteNormal);
+                        pVazia.setSpacingAfter(15);
+                        document.add(pVazia);
+                    }
+                }
+            } else {
+                document.add(new Paragraph("Nenhuma turma cadastrada no sistema.", fonteNormal));
+            }
+
+            // Quebra de Página para os Professores
+            document.newPage();
+
+            // ==========================================
+            // SESSÃO 2: PROFESSORES E SALÁRIOS
+            // ==========================================
+            Paragraph subProfessores = new Paragraph("2. Quadro de Professores", fonteSubTitulo);
+            subProfessores.setSpacingAfter(15);
+            document.add(subProfessores);
+
+            ProfessorDAO professorDAO = new ProfessorDAO();
+            List<Professor> professores = professorDAO.listarprofessors();
+
+            if (professores != null && !professores.isEmpty()) {
+                PdfPTable tabelaProf = new PdfPTable(4);
+                tabelaProf.setWidthPercentage(100);
+                tabelaProf.setWidths(new float[]{2f, 3f, 2f, 2f});
+                tabelaProf.setSpacingBefore(10);
+
+                PdfPCell cCpf = new PdfPCell(new Phrase("CPF", fonteNegrito));
+                PdfPCell cNome = new PdfPCell(new Phrase("Nome", fonteNegrito));
+                PdfPCell cBruto = new PdfPCell(new Phrase("Salário Bruto", fonteNegrito));
+                PdfPCell cLiquido = new PdfPCell(new Phrase("Salário Líquido", fonteNegrito));
+
+                cCpf.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                cNome.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                cBruto.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+                cLiquido.setBackgroundColor(com.itextpdf.text.BaseColor.LIGHT_GRAY);
+
+                tabelaProf.addCell(cCpf);
+                tabelaProf.addCell(cNome);
+                tabelaProf.addCell(cBruto);
+                tabelaProf.addCell(cLiquido);
+
+                for (Professor prof : professores) {
+                    tabelaProf.addCell(new Phrase(prof.getCpf(), fonteNormal));
+                    tabelaProf.addCell(new Phrase(prof.getNome(), fonteNormal));
+                    tabelaProf.addCell(new Phrase("R$ " + df.format(prof.getSalarioBruto()), fonteNormal));
+                    tabelaProf.addCell(new Phrase("R$ " + df.format(prof.getSalarioLiquido()), fonteNormal));
+                }
+                document.add(tabelaProf);
+            } else {
+                document.add(new Paragraph("Nenhum professor cadastrado.", fonteNormal));
+            }
+
+            document.close();
+
+        } catch (DocumentException | IOException e) {
+            registrarErroLog("Falha ao gerar PDF: " + e.getMessage());
+            throw new RuntimeException("Erro ao gerar PDF: " + e.getMessage(), e);
+        } catch (Exception e) {
+            registrarErroLog("Erro inesperado na geração do relatório: " + e.getMessage());
+            throw new RuntimeException("Erro inesperado: " + e.getMessage(), e);
+        }
+    }
+
+    private void registrarErroLog(String mensagemErro) {
+        try (FileWriter writer = new FileWriter("erros.dat", true)) {
+            SimpleDateFormat dataHoraAtual = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            String dataFormatada = dataHoraAtual.format(new Date());
+            writer.write("[" + dataFormatada + "] Erro: " + mensagemErro + "\n");
+        } catch (IOException e) {
+            System.out.println("Erro Crítico: Não foi possível gravar o log de erro físico. " + e.getMessage());
+        }
+    }
+}

@@ -97,4 +97,19 @@ public class Professor extends Pessoa {
 
         System.out.println("Salário Líquido: R$" + salarioLiquido);
     }
+
+    public double getSalarioLiquido() {
+        double salarioFinalBruto = salarioBruto;
+        double salarioLiquido = salarioFinalBruto;
+
+        // Desconto de 22,5% para IRRF se maior que 5000
+        if(salarioFinalBruto >= 5000) {
+            salarioLiquido -= salarioFinalBruto * 0.225;
+        }
+
+        // Aplicando desconto de 14% para INSS
+        salarioLiquido -= salarioFinalBruto * 0.14;
+
+        return salarioLiquido;
+    }
 }

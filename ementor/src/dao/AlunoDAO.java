@@ -133,6 +133,31 @@ public class AlunoDAO {
         }
     }
 
+    public void atualizarNotas(String matricula, double[] notas) {
+        String sql = "UPDATE aluno SET nota1 = ?, nota2 = ?, nota3 = ?, nota4 = ?, nota5 = ?, nota6 = ?, nota7 = ?, nota8 = ?, nota9 = ?, nota10 = ? WHERE matricula = ?";
+        try (Connection connection = Conexao.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+             
+            for (int i = 0; i < 10; i++) {
+                if (notas != null && i < notas.length) {
+                    statement.setDouble(i + 1, notas[i]);
+                } else {
+                    statement.setDouble(i + 1, 0.0);
+                }
+            }
+            statement.setString(11, matricula);
+            
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Notas do aluno atualizadas com sucesso!");
+            } else {
+                System.out.println("Aluno não encontrado para atualizar as notas.");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao atualizar notas do aluno.", e);
+        }
+    }
+
     private Turma criarTurma(ResultSet rs) throws SQLException{
         Turma turma = new Turma();
 

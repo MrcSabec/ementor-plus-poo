@@ -4,12 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class MenuPrincipal extends JFrame {
 
     public MenuPrincipal() {
         setTitle("eMentor-Plus - Menu Principal");
-        setSize(800, 720); // Aumentado para comportar a nova linha sem espremer
+        setSize(800, 850); // Altura aumentada para os botões respirarem
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Encerra o sistema ao fechar
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -85,6 +87,26 @@ public class MenuPrincipal extends JFrame {
         painelBotoes.add(btnAlterarTurma);
 
         add(painelBotoes, BorderLayout.CENTER);
+
+        // ==========================================
+        // RODAPÉ: BOTÃO GERAR RELATÓRIO PDF
+        // ==========================================
+        JPanel painelRodape = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        painelRodape.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 30));
+        JButton btnGerarRelatorio = new JButton("Gerar Relatório (PDF)");
+        btnGerarRelatorio.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        btnGerarRelatorio.setBackground(new Color(220, 53, 69)); // Vermelho para destacar PDF
+        btnGerarRelatorio.setForeground(Color.WHITE);
+        
+        try {
+            ImageIcon iconePdf = new ImageIcon(getClass().getResource("/imagens/icone_pdf.png"));
+            Image imgPdf = iconePdf.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            btnGerarRelatorio.setIcon(new ImageIcon(imgPdf));
+        } catch (Exception ex) {
+            System.out.println("Ícone PDF não encontrado.");
+        }
+        painelRodape.add(btnGerarRelatorio);
+        add(painelRodape, BorderLayout.SOUTH);
 
         // ==========================================
         // AÇÕES DOS BOTÕES (Exemplo do Cadastrar Aluno)
@@ -208,6 +230,77 @@ public class MenuPrincipal extends JFrame {
                 dispose();
                 TelaAlterarTurma telaAltera = new TelaAlterarTurma();
                 telaAltera.setVisible(true);
+            }
+        });
+
+        // ==========================================
+        // AÇÃO: GERAR RELATÓRIO PDF
+        // ==========================================
+        btnGerarRelatorio.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Salvar Relatório PDF");
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Arquivo PDF", "pdf");
+                fileChooser.addChoosableFileFilter(filter);
+                fileChooser.setSelectedFile(new File("relatorio_ementor.pdf"));
+
+                int userSelection = fileChooser.showSaveDialog(MenuPrincipal.this);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    String caminhoAbsoluto = fileToSave.getAbsolutePath();
+                    if (!caminhoAbsoluto.toLowerCase().endsWith(".pdf")) {
+                        caminhoAbsoluto += ".pdf";
+                    }
+                    
+                    final String caminhoFinal = caminhoAbsoluto;
+
+                    btnGerarRelatorio.setEnabled(false);
+
+                    JDialog dialogProgresso = new JDialog();
+                    dialogProgresso.setTitle("Gerando Relatório PDF...");
+                    dialogProgresso.setSize(300, 100);
+                    dialogProgresso.setLocationRelativeTo(null);
+                    dialogProgresso.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+                    JProgressBar barraProgresso = new JProgressBar(0, 100);
+                    barraProgresso.setStringPainted(true);
+                    dialogProgresso.add(barraProgresso, BorderLayout.CENTER);
+                    dialogProgresso.setVisible(true);
+
+                    Thread threadSalvamento = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                barraProgresso.setValue(20);
+                                barraProgresso.setString("Buscando dados no banco...");
+                                Thread.sleep(800);
+
+                                barraProgresso.setValue(50);
+                                barraProgresso.setString("Calculando médias e formatando...");
+                                
+                                GeradorRelatorioPDF gerador = new GeradorRelatorioPDF();
+                                gerador.gerarRelatorio(caminhoFinal);
+
+                                barraProgresso.setValue(100);
+                                barraProgresso.setString("Finalizado!");
+                                Thread.sleep(500);
+
+                                dialogProgresso.dispose();
+                                JOptionPane.showMessageDialog(null, "Relatório PDF gerado com sucesso em:\n" + caminhoFinal);
+
+                            } catch (Exception ex) {
+                                dialogProgresso.dispose();
+                                JOptionPane.showMessageDialog(null, "Erro ao gerar PDF: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                            } finally {
+                                btnGerarRelatorio.setEnabled(true);
+                            }
+                        }
+                    });
+                    threadSalvamento.start();
+                }
             }
         });
     }

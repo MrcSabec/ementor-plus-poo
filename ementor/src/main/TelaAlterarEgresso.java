@@ -13,6 +13,7 @@ public class TelaAlterarEgresso extends JFrame {
 
     private JTextField txtBuscaMatricula, txtNome, txtCpf, txtDataNasc, txtTelefone, txtCidade, txtEstado, txtMatricula, txtPeriodo;
     private JTextField txtProfissao, txtSalario, txtCursoAnterior, txtCursoAtual;
+    private JTextField[] txtNotas = new JTextField[10];
     private JComboBox<main.Turma> cbTurma;
     private Egresso egressoCarregado;
     private java.util.List<Egresso> listaEgressos;
@@ -129,7 +130,43 @@ public class TelaAlterarEgresso extends JFrame {
         txtCursoAnterior = criarCampo(painelFormulario, "Curso Anterior:", fontePadrao);
         txtCursoAtual = criarCampo(painelFormulario, "Curso Atual:", fontePadrao);
 
-        painelCentralizador.add(painelFormulario);
+        // Painel Global do Centro que vai segurar o Formulario + Notas
+        JPanel painelCentroGlobal = new JPanel(new BorderLayout());
+        painelCentroGlobal.add(painelFormulario, BorderLayout.CENTER);
+
+        // Painel Inferior: Exibição de Notas e Botão "Atribuir Notas"
+        JPanel painelNotasContainer = new JPanel(new BorderLayout());
+        painelNotasContainer.setBorder(BorderFactory.createTitledBorder("Notas Lançadas"));
+        
+        JPanel painelNotas = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        for (int i = 0; i < 10; i++) {
+            txtNotas[i] = new JTextField(3);
+            txtNotas[i].setEditable(false);
+            txtNotas[i].setHorizontalAlignment(JTextField.CENTER);
+            txtNotas[i].setBackground(new Color(245, 245, 245));
+            painelNotas.add(new JLabel("N" + (i + 1) + ":"));
+            painelNotas.add(txtNotas[i]);
+        }
+        
+        JPanel painelAcaoNotas = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton btnAtribuirNotas = new JButton("Gerenciar Notas");
+        btnAtribuirNotas.setBackground(new Color(255, 165, 0)); // Laranja
+        btnAtribuirNotas.setForeground(Color.WHITE);
+        try {
+            ImageIcon iconNotas = new ImageIcon(getClass().getResource("/imagens/icone_notas.png"));
+            Image imgNotas = iconNotas.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            btnAtribuirNotas.setIcon(new ImageIcon(imgNotas));
+        } catch (Exception ex) {
+            System.out.println("Ícone de notas não encontrado.");
+        }
+        painelAcaoNotas.add(btnAtribuirNotas);
+
+        painelNotasContainer.add(painelNotas, BorderLayout.CENTER);
+        painelNotasContainer.add(painelAcaoNotas, BorderLayout.SOUTH);
+
+        painelCentroGlobal.add(painelNotasContainer, BorderLayout.SOUTH);
+
+        painelCentralizador.add(painelCentroGlobal);
 
         JScrollPane scrollPane = new JScrollPane(painelCentralizador);
         scrollPane.setBorder(null);
@@ -173,6 +210,18 @@ public class TelaAlterarEgresso extends JFrame {
         // ==========================================
         // EVENTOS DOS BOTÕES
         // ==========================================
+
+        btnAtribuirNotas.addActionListener(e -> {
+            String matricula = txtMatricula.getText();
+            if (matricula == null || matricula.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Busque um egresso primeiro!", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            // Abre a tela de notas passando a matrícula
+            TelaNotasAluno telaNotas = new TelaNotasAluno(matricula);
+            telaNotas.setVisible(true);
+            dispose();
+        });
 
         btnBuscar.addActionListener(e -> {
             String matBusca = txtBuscaMatricula.getText();
@@ -327,6 +376,16 @@ public class TelaAlterarEgresso extends JFrame {
                     cbTurma.setSelectedIndex(i);
                     break;
                 }
+            }
+        }
+        
+        // Preenche as notas
+        double[] notas = egresso.getNotas();
+        for (int i = 0; i < 10; i++) {
+            if (notas != null && notas[i] > 0) {
+                txtNotas[i].setText(String.format("%.1f", notas[i]));
+            } else {
+                txtNotas[i].setText("-");
             }
         }
         
