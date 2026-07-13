@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.Conexao;
-import exception.CodigoErro;
-import exception.DAOException;
+import exception.*;
 import main.Professor;
 
 public class ProfessorDAO {
