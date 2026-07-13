@@ -18,6 +18,25 @@ import main.Turma;
 public class EgressoDAO {
 
 
+    public boolean existe(Connection connection, String cpf_pessoa) throws SQLException {
+        String sql = "SELECT cpf_pessoa FROM egresso WHERE cpf_pessoa = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, cpf_pessoa);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            StringBuilder sb = new StringBuilder();
+            try (ResultSet rs = connection.getMetaData().getColumns(null, null, "egresso", null)) {
+                sb.append("Colunas reais de egresso: ");
+                while(rs.next()) {
+                    sb.append(rs.getString("COLUMN_NAME")).append(", ");
+                }
+            } catch (Exception ex) {}
+            throw new SQLException(e.getMessage() + "\n" + sb.toString(), e);
+        }
+    }
+
     //Função responsavel por inserir um egresso no banco de dados
     //CONSIDERE QUE COMO ELE FOI ELEITO A EGRESSO, JÁ EXISTE UM ALUNO E UMA PESSOA CADASTRADA PARA ELE!!!
     public void inserir(Egresso egresso) {
@@ -26,29 +45,59 @@ public class EgressoDAO {
             connection = Conexao.getConnection();
             connection.setAutoCommit(false);
             
-            String sql = """
-            INSERT INTO egresso
-            (profissao_atual, faixa_salarial, curso_anterior, curso_atual,
-            matricula)
-            VALUES (?, ?, ?, ?, ?)
-            """;
+            // 1. Verifica e Upsert Pessoa
+            PessoaDAO pessoaDAO = new PessoaDAO();
+            if (pessoaDAO.buscar(connection, egresso.getCpf()) != null) {
+                pessoaDAO.atualizar(connection, egresso);
+            } else {
+                pessoaDAO.inserir(connection, egresso);
+            }
 
-            try (PreparedStatement statement=
-                        connection.prepareStatement(sql)) {
+            // 2. Verifica e Upsert Aluno
+            AlunoDAO alunoDAO = new AlunoDAO();
+            if (alunoDAO.existe(connection, egresso.getMatricula())) {
+                String sqlAluno = "UPDATE aluno SET periodo = ?, codigo_turma = ? WHERE matricula = ?";
+                try (PreparedStatement statementAluno = connection.prepareStatement(sqlAluno)) {
+                    statementAluno.setInt(1, egresso.getPeriodo());
+                    statementAluno.setString(2, egresso.getTurma().getCodigo());
+                    statementAluno.setString(3, egresso.getMatricula());
+                    statementAluno.executeUpdate();
+                }
+            } else {
+                alunoDAO.inserir(connection, egresso);
+            }
 
-                statement.setString(1, egresso.getProfissaoAtual());
-                statement.setDouble(2, egresso.getFaixaSalarial());
-                statement.setString(3, egresso.getCursoAnterior());
-                statement.setString(3,egresso.getCursoAtual());
-                statement.setString(5,egresso.getMatricula());
-                statement.executeUpdate();
+            // 3. Verifica e Upsert Egresso
+            if (existe(connection, egresso.getCpf())) {
+                String sqlEgresso = "UPDATE egresso SET profissao_atual = ?, faixa_salarial = ?, curso_anterior = ?, curso_atual = ? WHERE cpf_pessoa = ?";
+                try (PreparedStatement statement = connection.prepareStatement(sqlEgresso)) {
+                    statement.setString(1, egresso.getProfissaoAtual());
+                    statement.setDouble(2, egresso.getFaixaSalarial());
+                    statement.setString(3, egresso.getCursoAnterior());
+                    statement.setString(4, egresso.getCursoAtual());
+                    statement.setString(5, egresso.getCpf());
+                    statement.executeUpdate();
+                }
+            } else {
+                String sql = """
+                INSERT INTO egresso
+                (profissao_atual, faixa_salarial, curso_anterior, curso_atual,
+                cpf_pessoa)
+                VALUES (?, ?, ?, ?, ?)
+                """;
+                try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                    statement.setString(1, egresso.getProfissaoAtual());
+                    statement.setDouble(2, egresso.getFaixaSalarial());
+                    statement.setString(3, egresso.getCursoAnterior());
+                    statement.setString(4, egresso.getCursoAtual());
+                    statement.setString(5, egresso.getCpf());
+                    statement.executeUpdate();
+                }
             }
             connection.commit();
-
             System.out.println("Egresso cadastrado com sucesso!");
 
-        } catch (SQLException e) {
-
+        } catch (Exception e) {
             if (connection != null) {
                 try {
                     connection.rollback();
@@ -56,9 +105,7 @@ public class EgressoDAO {
                     ex.printStackTrace();
                 }
             }
-
             throw new RuntimeException("Erro ao cadastrar Egresso", e);
-
         } finally {
 
             if (connection != null) {
@@ -173,12 +220,12 @@ public class EgressoDAO {
             t.nome
             FROM egresso e
             JOIN aluno a
-            ON e.matricula = a.matricula 
+            ON e.cpf_pessoa = a.cpf_pessoa 
             JOIN pessoa p 
-            ON a.cpf = p.cpf 
+            ON a.cpf_pessoa = p.cpf 
             JOIN turma t
             ON a.codigo_turma = t.codigo
-            WHERE e.matricula = ?
+            WHERE a.matricula = ?
         """;
 
         try (Connection connection = Conexao.getConnection();
@@ -207,8 +254,8 @@ public class EgressoDAO {
                 t.codigo,
                 t.nome
                 FROM egresso e 
-                JOIN aluno a ON a.matricula = e.matricula 
-                JOIN pessoa p ON a.cpf = p.cpf 
+                JOIN aluno a ON a.cpf_pessoa = e.cpf_pessoa 
+                JOIN pessoa p ON a.cpf_pessoa = p.cpf 
                 JOIN turma t ON a.codigo_turma = t.codigo
                 ORDER BY p.nome
                 """;
@@ -232,11 +279,11 @@ public class EgressoDAO {
         String sql = """
                 SELECT * 
                 FROM egresso e
-                JOIN aluno a ON a.matricula = e.matricula
-                JOIN pessoa p ON a.cpf = p.cpf 
+                JOIN aluno a ON a.cpf_pessoa = e.cpf_pessoa
+                JOIN pessoa p ON a.cpf_pessoa = p.cpf 
                 JOIN turma t ON t.codigo = a.codigo_turma 
-                ORDER BY p.nome 
                 WHERE a.codigo_turma = ?
+                ORDER BY p.nome 
                 """;
         try (Connection connection = Conexao.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
@@ -255,7 +302,7 @@ public class EgressoDAO {
     private String buscarCpfPorMatricula(Connection connection, String matricula)
         throws SQLException {
 
-        String sql = "SELECT cpf FROM egresso WHERE matricula = ?";
+        String sql = "SELECT cpf_pessoa FROM aluno WHERE matricula = ?";
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -264,12 +311,11 @@ public class EgressoDAO {
             try (ResultSet rs = statement.executeQuery()) {
 
                 if (rs.next()) {
-                    return rs.getString("cpf");
+                    return rs.getString("cpf_pessoa");
                 }
-
-                return null;
             }
         }
+        return null;
     }
     
     public void remover(String matricula) {
@@ -285,13 +331,10 @@ public class EgressoDAO {
             }
 
             // Remove da tabela egresso
-            String sql = "DELETE FROM egresso WHERE matricula = ?";
-
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
-                statement.setString(1, matricula);
-
-                statement.executeUpdate();
+            String sqlEgresso = "DELETE FROM egresso WHERE cpf_pessoa = ?";
+            try (PreparedStatement stmtEgresso = connection.prepareStatement(sqlEgresso)) {
+                stmtEgresso.setString(1, cpf);
+                stmtEgresso.executeUpdate();
             }
 
             AlunoDAO alunoDAO = new AlunoDAO();

@@ -10,7 +10,7 @@ public class TelaLogin extends JFrame {
 
     public TelaLogin() {
         setTitle("eMentor-Plus - Login");
-        setSize(600, 400); // Aumentei um pouco a janela
+        setSize(600, 400); // Define o tamanho da janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -59,7 +59,7 @@ public class TelaLogin extends JFrame {
         painelPrincipal.add(txtUsuario);
         painelPrincipal.add(lblSenha);
         painelPrincipal.add(txtSenha);
-        painelPrincipal.add(new JLabel("")); // Espaço vazio para alinhar o botão
+        painelPrincipal.add(new JLabel("")); // Espaçador para alinhamento
         painelPrincipal.add(btnEntrar);
 
         JPanel painelCentralizador = new JPanel(new GridBagLayout());

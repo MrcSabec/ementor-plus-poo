@@ -14,48 +14,32 @@ import main.Turma;
 
 public class AlunoDAO {
 
+    public boolean existe(Connection connection, String matricula) throws SQLException {
+        String sql = "SELECT matricula FROM aluno WHERE matricula = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, matricula);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
 
     //Função responsavel por inserir um aluno no banco de dados
     public void inserir(Aluno aluno) {
         Connection connection = null;
         try {
             connection = Conexao.getConnection();
-            // Inicia a transação
             connection.setAutoCommit(false);
+            
             PessoaDAO pessoaDAO = new PessoaDAO();
             pessoaDAO.inserir(connection, aluno);
-
-            String sql = """
-            INSERT INTO aluno
-            (matricula, cpf_pessoa, periodo, codigo_turma,
-            nota1, nota2, nota3, nota4, nota5,
-            nota6, nota7, nota8, nota9, nota10)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """;
-
-            try (PreparedStatement statementAluno =
-                        connection.prepareStatement(sql)) {
-
-                statementAluno.setString(1, aluno.getMatricula());
-                statementAluno.setString(2, aluno.getCpf());
-                statementAluno.setInt(3, aluno.getPeriodo());
-                if(aluno.getTurma() == null){
-                    throw new IllegalArgumentException("O aluno deve possuir uma turma.");
-                }
-                statementAluno.setString(4, aluno.getTurma().getCodigo());
-
-                for (int i = 0; i < 10; i++) {
-                    statementAluno.setDouble(i + 5, aluno.getNotas()[i]);
-                }
-
-                statementAluno.executeUpdate();
-            }
+            
+            inserir(connection, aluno);
+            
             connection.commit();
-
             System.out.println("Aluno cadastrado com sucesso!");
-
         } catch (SQLException e) {
-
             if (connection != null) {
                 try {
                     connection.rollback();
@@ -63,11 +47,8 @@ public class AlunoDAO {
                     ex.printStackTrace();
                 }
             }
-
-            throw new RuntimeException("Erro ao cadastrar aluno.", e);
-
+            throw new RuntimeException("Erro ao cadastrar Aluno", e);
         } finally {
-
             if (connection != null) {
                 try {
                     connection.setAutoCommit(true);
@@ -78,6 +59,33 @@ public class AlunoDAO {
             }
         }
     }
+
+    public void inserir(Connection connection, Aluno aluno) throws SQLException {
+        String sql = """
+        INSERT INTO aluno
+        (matricula, cpf_pessoa, periodo, codigo_turma,
+        nota1, nota2, nota3, nota4, nota5,
+        nota6, nota7, nota8, nota9, nota10)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement statementAluno = connection.prepareStatement(sql)) {
+            statementAluno.setString(1, aluno.getMatricula());
+            statementAluno.setString(2, aluno.getCpf());
+            statementAluno.setInt(3, aluno.getPeriodo());
+            if(aluno.getTurma() == null){
+                throw new IllegalArgumentException("O aluno deve possuir uma turma.");
+            }
+            statementAluno.setString(4, aluno.getTurma().getCodigo());
+
+            for (int i = 0; i < 10; i++) {
+                statementAluno.setDouble(i + 5, aluno.getNotas()[i]);
+            }
+
+            statementAluno.executeUpdate();
+        }
+    }
+
     //Funcao responsavel por alterar os dados de um aluno do banco de dados, atraves da matricula informada no aluno
     public void alterar(Connection connection, Aluno aluno){
         try{
@@ -198,12 +206,14 @@ public class AlunoDAO {
 
         String sql = """
                 SELECT a.*,
-                p.*
+                p.*,
                 t.codigo,
                 t.nome
                 FROM aluno a 
                 JOIN pessoa p ON a.cpf_pessoa = p.cpf 
                 JOIN turma t ON a.codigo_turma = t.codigo
+                LEFT JOIN egresso e ON a.cpf_pessoa = e.cpf_pessoa
+                WHERE e.cpf_pessoa IS NULL
                 ORDER BY p.nome
                 """;
 

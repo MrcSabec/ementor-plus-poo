@@ -11,14 +11,11 @@ public class TelaCadastroAluno extends JFrame {
 
     public TelaCadastroAluno() {
         setTitle("eMentor-Plus - Cadastrar Aluno");
-        setSize(600, 750); // Janela um pouco mais alta para caber todos os campos
+        setSize(600, 750); // Define o tamanho da janela
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // ==========================================
-        // TOPO: LOGO E TÍTULO (Te perseguindo!)
-        // ==========================================
         JPanel painelTopo = new JPanel(new BorderLayout());
         painelTopo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         try {
@@ -32,17 +29,13 @@ public class TelaCadastroAluno extends JFrame {
         }
         add(painelTopo, BorderLayout.NORTH);
 
-        // ==========================================
-        // CENTRO: FORMULÁRIO COMPACTO
-        // ==========================================
-        // Usamos GridBagLayout no painel centralizador para o formulário não esticar
         JPanel painelCentralizador = new JPanel(new GridBagLayout());
 
-        // GridLayout para alinhar os rótulos e caixas de texto (11 linhas, 2 colunas)
+        // Define o layout do painel de formulário
         JPanel painelFormulario = new JPanel(new GridLayout(11, 2, 10, 10));
         Font fontePadrao = new Font("Segoe UI", Font.PLAIN, 18);
 
-        // Criando os campos
+        // Instanciação dos campos de texto
         JTextField txtNome = criarCampo(painelFormulario, "Nome Completo:", fontePadrao);
         JTextField txtCpf = criarCampo(painelFormulario, "CPF:", fontePadrao);
         JTextField txtDataNasc = criarCampo(painelFormulario, "Data de Nascimento:", fontePadrao);
@@ -53,18 +46,41 @@ public class TelaCadastroAluno extends JFrame {
         JTextField txtEstado = criarCampo(painelFormulario, "Estado:", fontePadrao);
         JTextField txtMatricula = criarCampo(painelFormulario, "Matrícula:", fontePadrao);
         JTextField txtPeriodo = criarCampo(painelFormulario, "Período:", fontePadrao);
-        JTextField txtTurma = criarCampo(painelFormulario, "Turma:", fontePadrao);
-
-        // Adiciona o formulário no centralizador, e o centralizador na janela
+        // Campo de seleção de Turma
+        JLabel lblTurma = new JLabel("Turma:");
+        lblTurma.setFont(fontePadrao);
+        JComboBox<Turma> cbTurma = new JComboBox<>();
+        cbTurma.setFont(fontePadrao);
+        cbTurma.setPreferredSize(new Dimension(250, 25));
+        
+        // Carrega as turmas do banco de dados
+        TurmaDAO turmaDAO = new TurmaDAO();
+        java.util.List<Turma> listaTurmas = turmaDAO.listarTurmas();
+        for (Turma t : listaTurmas) {
+            cbTurma.addItem(t);
+        }
+        
+        // Configura o renderer para exibir o nome da turma
+        cbTurma.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Turma) {
+                    setText(((Turma) value).getNome() + " (" + ((Turma) value).getCodigo() + ")");
+                }
+                return this;
+            }
+        });
+        
+        painelFormulario.add(lblTurma);
+        painelFormulario.add(cbTurma);
+        // Adiciona os painéis à janela
         painelCentralizador.add(painelFormulario);
         add(painelCentralizador, BorderLayout.CENTER);
 
-        // ==========================================
-        // SUL: BOTÕES DE AÇÃO (Com ícones exigidos)
-        // ==========================================
         JPanel painelBotoes = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 20));
 
-        // Botão Voltar (Exigência do projeto)
+        // Botão Voltar
         JButton btnVoltar = new JButton("Voltar");
         try {
             ImageIcon iconeVoltarOriginal = new ImageIcon(getClass().getResource("/imagens/icone_voltar.png"));
@@ -112,7 +128,7 @@ public class TelaCadastroAluno extends JFrame {
                 try {
                     SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
                     Date dataNscDt = formatoData.parse(txtDataNasc.getText());
-                    // 1. Coletar os dados digitados ANTES de iniciar a Thread
+                    // Coleta os dados do formulário
                     String nomeStr = txtNome.getText();
                     String cpfStr = txtCpf.getText();
                     String telefoneStr = txtTelefone.getText();
@@ -122,37 +138,37 @@ public class TelaCadastroAluno extends JFrame {
                     String estadoStr = txtEstado.getText();
                     String matriculaStr = txtMatricula.getText();
                     int periodoStr = Integer.parseInt(txtPeriodo.getText());
-                    String turmaStr = txtTurma.getText();
-
-                    // 2. Desabilitar o botão para o usuário não clicar duas vezes
+                    Turma turmaSelecionada = (Turma) cbTurma.getSelectedItem();
+                    
+                    // Desabilita o botão para evitar duplicação
                     btnSalvar.setEnabled(false);
 
-                    // 3. Criar a Janela com a Barra de Progresso (Exigência do Projeto)
+                    // Cria o diálogo de progresso
                     JDialog dialogProgresso = new JDialog();
                     dialogProgresso.setTitle("Salvando...");
                     dialogProgresso.setSize(300, 100);
                     dialogProgresso.setLocationRelativeTo(null);
-                    dialogProgresso.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); // Impede de fechar no X
+                    dialogProgresso.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE); // Impede fechamento manual
 
                     JProgressBar barraProgresso = new JProgressBar(0, 100);
-                    barraProgresso.setStringPainted(true); // Mostra a porcentagem %
+                    barraProgresso.setStringPainted(true); // Exibe a porcentagem
                     dialogProgresso.add(barraProgresso, BorderLayout.CENTER);
                     dialogProgresso.setVisible(true);
 
                     // =========================================================
-                    // 4. A THREAD (Processo em paralelo para salvar no Banco)
+                    // Inicia thread de salvamento
                     // =========================================================
                     Thread threadSalvamento = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                // Passo A: Simula o início do salvamento
+                                // Atualiza progresso: preparação
                                 barraProgresso.setValue(20);
                                 barraProgresso.setString("Preparando dados...");
-                                Thread.sleep(500); // Pausa apenas para o efeito visual da barra
+                                Thread.sleep(500); // Simulação de tempo de processamento
 
-                                // Passo B: Instanciar o Aluno e salvar no banco
-                                Aluno novoAluno = new Aluno(nomeStr, dataNscDt, cpfStr, telefoneStr, ruaStr, bairroStr, cidadeStr, estadoStr, matriculaStr, periodoStr, turmaStr);
+                                // Instancia e salva o Aluno
+                                Aluno novoAluno = new Aluno(nomeStr, dataNscDt, cpfStr, telefoneStr, ruaStr, bairroStr, cidadeStr, estadoStr, matriculaStr, periodoStr, turmaSelecionada);
                                 AlunoDAO alunoDao = new AlunoDAO();
                                 alunoDao.inserir(novoAluno);
 
@@ -160,7 +176,7 @@ public class TelaCadastroAluno extends JFrame {
                                 barraProgresso.setString("Aluno salvo! Criando acesso...");
                                 Thread.sleep(500);
 
-                                // Passo C: Tornar o Aluno um "Usuário" do sistema!
+                                // Cria o usuário de acesso para o Aluno
                                 Usuario novoUsuario = new Usuario();
                                 novoUsuario.setDadosUsuario(matriculaStr, "mudar@123", NivelAcesso.NIVEL_3);
                                 UsuarioDAO usuarioDao = new UsuarioDAO();
@@ -170,11 +186,11 @@ public class TelaCadastroAluno extends JFrame {
                                 barraProgresso.setString("Finalizado!");
                                 Thread.sleep(500);
 
-                                // Passo D: Sucesso e fechar a tela
+                                // Conclui e fecha a tela
                                 dialogProgresso.dispose();
                                 JOptionPane.showMessageDialog(null, "Aluno e Usuário cadastrados com sucesso!\nLogin: " + matriculaStr + "\nSenha Padrão: mudar@123");
 
-                                dispose(); // Fecha a tela de cadastro
+                                dispose(); // Fecha a janela
                                 MenuPrincipal menu = new MenuPrincipal();
                                 menu.setVisible(true);
                             } catch (Exception ex) {
@@ -185,7 +201,7 @@ public class TelaCadastroAluno extends JFrame {
                         }
                     });
 
-                    // 5. Dar o "Start" na Thread
+                    // Inicia a execução da thread
                     threadSalvamento.start();
                     
                 } catch (NumberFormatException ex) {
@@ -203,14 +219,14 @@ public class TelaCadastroAluno extends JFrame {
     }
 
     // ==========================================
-    // MÉTODO AUXILIAR PARA CRIAR CAMPOS RAPIDAMENTE
+    // Método auxiliar para criar campos do formulário
     // ==========================================
     private JTextField criarCampo(JPanel painel, String textoLabel, Font fonte) {
         JLabel label = new JLabel(textoLabel);
         label.setFont(fonte);
         JTextField txtField = new JTextField();
         txtField.setFont(fonte);
-        txtField.setPreferredSize(new Dimension(250, 25)); // Define um tamanho fixo bonito
+        txtField.setPreferredSize(new Dimension(250, 25)); // Define o tamanho preferencial
 
         painel.add(label);
         painel.add(txtField);

@@ -27,19 +27,21 @@ public class PessoaDAO {
         
     }
     public void atualizar(Connection connection, Pessoa pessoa) throws SQLException{
-        String sql = "UPDATE pessoa SET telefone = ?, rua = ?, bairro = ?, cidade = ?, estado = ? WHERE cpf = ?";
+        String sql = "UPDATE pessoa SET nome = ?, nascimento = ?, telefone = ?, rua = ?, bairro = ?, cidade = ?, estado = ? WHERE cpf = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, pessoa.getTelefone());
-            statement.setString(2, pessoa.getRua());
-            statement.setString(3, pessoa.getBairro());
-            statement.setString(4, pessoa.getCidade());
-            statement.setString(5, pessoa.getEstado());
-            statement.setString(6, pessoa.getCpf());
+            statement.setString(1, pessoa.getNome());
+            statement.setDate(2, new java.sql.Date(pessoa.getNascimento().getTime()));
+            statement.setString(3, pessoa.getTelefone());
+            statement.setString(4, pessoa.getRua());
+            statement.setString(5, pessoa.getBairro());
+            statement.setString(6, pessoa.getCidade());
+            statement.setString(7, pessoa.getEstado());
+            statement.setString(8, pessoa.getCpf());
             int rowsUpdated = statement.executeUpdate();
             if (rowsUpdated > 0) {
                 System.out.println("Pessoa atualizada com sucesso no banco de dados!");
             } else {
-                System.out.println("Pessoa não encontrada no banco de dados.");
+                System.out.println("Pessoa não modificada ou não encontrada no banco de dados.");
             }
         } catch (SQLException e) {
             e.printStackTrace();

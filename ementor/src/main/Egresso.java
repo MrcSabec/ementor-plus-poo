@@ -10,7 +10,7 @@ public class Egresso extends Aluno{
     private String cursoAtual;
     public Egresso(){}
     public Egresso(String nome, Date dataNascimento, String cpf, String telefone, String rua, String bairro, String cidade, String estado,
-                   String matricula, int periodo, String turma,
+                   String matricula, int periodo, Turma turma,
                    String profissaoAtual, double faixaSalarial, String cursoAnterior, String cursoAtual){
         super(nome, dataNascimento, cpf, telefone, rua, bairro, cidade, estado, matricula, periodo, turma);
         this.profissaoAtual = profissaoAtual;
@@ -19,7 +19,7 @@ public class Egresso extends Aluno{
         this.cursoAtual = cursoAtual;
     }
     public void setDados(String nome, Date dataNascimento, String cpf, String telefone, String rua, String bairro, String cidade, String estado,
-                         String matricula, int periodo, String turma, double[] notas,
+                         String matricula, int periodo, Turma turma, double[] notas,
                          String profissaoAtual, double faixaSalarial, String cursoAnterior, String cursoAtual){
         //Classe Pessoa + Aluno
         super.setDados( nome,  dataNascimento,  cpf,  telefone,  rua,  bairro,  cidade,  estado, matricula,  periodo,  turma, notas);
