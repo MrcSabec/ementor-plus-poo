@@ -1,3 +1,29 @@
 [13/07/2026 13:50:02] Erro na TelaAlterarTurma: Desvincular: Erro ao desvincular aluno da turma.
 [13/07/2026 13:50:06] Erro na TelaAlterarTurma: Desvincular: Erro ao desvincular aluno da turma.
 [13/07/2026 13:50:10] Erro na TelaAlterarTurma: Desvincular: Erro ao desvincular aluno da turma.
+================================
+2026-07-13T19:16:38.997743934
+Código: 1002
+Descrição: Erro durante inserção
+Mensagem: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', nome, nascimento, telefone, rua, bairro, cidade, estado) VALUES ('3', '3', '33' at line 1
+java.sql.SQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', nome, nascimento, telefone, rua, bairro, cidade, estado) VALUES ('3', '3', '33' at line 1
+	
+
+================================
+2026-07-13T19:20:35.695239849
+Código: 1004
+Descrição: Erro durante remoção
+Mensagem: Unknown column 'cpff' in 'where clause'
+
+================================
+2026-07-13T19:23:44.893764220
+Código: 1004
+Descrição: Erro durante remoção
+Mensagem: Unknown column 'cpff' in 'where clause'
+
+================================
+2026-07-13T19:24:11.481967241
+Código: 1004
+Descrição: Erro durante remoção
+Mensagem: Unknown column 'cpff' in 'where clause'
+

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import main.Pessoa;
+import exception.*;
 
 public class PessoaDAO {    
     public void inserir(Connection connection, Pessoa pessoa) throws SQLException {
@@ -23,6 +24,8 @@ public class PessoaDAO {
             statement.setString(7, pessoa.getCidade());
             statement.setString(8, pessoa.getEstado());
             statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DAOException(CodigoErro.ERRO_INSERIR, e);
         }
         
     }
@@ -44,7 +47,7 @@ public class PessoaDAO {
                 System.out.println("Pessoa não modificada ou não encontrada no banco de dados.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(CodigoErro.ERRO_ALTERAR, e);
         }
     }
 
@@ -59,7 +62,7 @@ public class PessoaDAO {
                 System.out.println("Pessoa não encontrada no banco de dados.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(CodigoErro.ERRO_REMOVER, e);
         }
     }
 
@@ -79,7 +82,7 @@ public class PessoaDAO {
                 return new Pessoa(nome, nascimento, cpf, telefone, rua, bairro, cidade, estado);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(CodigoErro.ERRO_BUSCAR, e);
         }
         return null;
     }
@@ -103,7 +106,7 @@ public class PessoaDAO {
                 pessoas.add(pessoa);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new  DAOException(CodigoErro.ERRO_LISTAR, e);
         }
         return pessoas;
     }

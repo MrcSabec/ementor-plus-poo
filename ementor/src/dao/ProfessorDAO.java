@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.Conexao;
-
+import exception.CodigoErro;
+import exception.DAOException;
 import main.Professor;
 
 public class ProfessorDAO {
@@ -82,7 +83,7 @@ public class ProfessorDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao cadastrar professor: " + e.getMessage(), e);
+            throw new DAOException(CodigoErro.ERRO_INSERIR, e);
 
         } finally {
 
@@ -135,7 +136,7 @@ public class ProfessorDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao atualizar professor: " + e.getMessage(), e);
+            throw new DAOException(CodigoErro.ERRO_ALTERAR, e);
         } finally {
             if (connection != null) {
                 try {
@@ -192,7 +193,7 @@ public class ProfessorDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar professor.", e);
+            throw new DAOException(CodigoErro.ERRO_BUSCAR, e);
         }
     }
 
@@ -214,7 +215,7 @@ public class ProfessorDAO {
                 professors.add(criarProfessor(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar professors.", e);
+            throw new DAOException(CodigoErro.ERRO_LISTAR, e);
         }
 
         return professors;
@@ -250,7 +251,7 @@ public class ProfessorDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao remover professor: " + e.getMessage(), e);
+            throw new DAOException(CodigoErro.ERRO_REMOVER, e);
 
         } finally {
 

@@ -8,20 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.Conexao;
-
+import exception.*;
 import main.Egresso;
-import main.Aluno;
 import main.Turma;
-
-
 
 public class EgressoDAO {
 
 
-    public boolean existe(Connection connection, String cpf_pessoa) throws SQLException {
-        String sql = "SELECT cpf_pessoa FROM egresso WHERE cpf_pessoa = ?";
+    public boolean existe(Connection connection, String matricula) throws SQLException {
+        String sql = "SELECT matricula FROM egresso WHERE matricula = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, cpf_pessoa);
+            statement.setString(1, matricula);
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.next();
             }
@@ -63,21 +60,21 @@ public class EgressoDAO {
                 alunoDAO.inserir(connection, egresso);
             }
 
-            if (existe(connection, egresso.getCpf())) {
-                String sqlEgresso = "UPDATE egresso SET profissao_atual = ?, faixa_salarial = ?, curso_anterior = ?, curso_atual = ? WHERE cpf_pessoa = ?";
+            if (existe(connection, egresso.getMatricula())) {
+                String sqlEgresso = "UPDATE egresso SET profissao_atual = ?, faixa_salarial = ?, curso_anterior = ?, curso_atual = ? WHERE matricula = ?";
                 try (PreparedStatement statement = connection.prepareStatement(sqlEgresso)) {
                     statement.setString(1, egresso.getProfissaoAtual());
                     statement.setDouble(2, egresso.getFaixaSalarial());
                     statement.setString(3, egresso.getCursoAnterior());
                     statement.setString(4, egresso.getCursoAtual());
-                    statement.setString(5, egresso.getCpf());
+                    statement.setString(5, egresso.getMatricula());
                     statement.executeUpdate();
                 }
             } else {
                 String sql = """
                 INSERT INTO egresso
                 (profissao_atual, faixa_salarial, curso_anterior, curso_atual,
-                cpf_pessoa)
+                matricula)
                 VALUES (?, ?, ?, ?, ?)
                 """;
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -85,13 +82,11 @@ public class EgressoDAO {
                     statement.setDouble(2, egresso.getFaixaSalarial());
                     statement.setString(3, egresso.getCursoAnterior());
                     statement.setString(4, egresso.getCursoAtual());
-                    statement.setString(5, egresso.getCpf());
+                    statement.setString(5, egresso.getMatricula());
                     statement.executeUpdate();
                 }
             }
             connection.commit();
-            System.out.println("Egresso cadastrado com sucesso!");
-
         } catch (Exception e) {
             if (connection != null) {
                 try {
@@ -100,7 +95,7 @@ public class EgressoDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao cadastrar Egresso", e);
+            throw new DAOException(CodigoErro.ERRO_INSERIR, e);
         } finally {
 
             if (connection != null) {
@@ -148,7 +143,7 @@ public class EgressoDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao atualizar aluno.", e);
+            throw new DAOException(CodigoErro.ERRO_ALTERAR, e);
         } finally {
             if (connection != null) {
                 try {
@@ -234,12 +229,12 @@ public class EgressoDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar aluno.", e);
+            throw new DAOException(CodigoErro.ERRO_BUSCAR, e);
         }
     }
 
     public List<Egresso> listarEgressos(){
-        List<Egresso> alunos = new ArrayList<>();
+        List<Egresso> egressos = new ArrayList<>();
 
         String sql = """
                 SELECT e.*,
@@ -248,23 +243,23 @@ public class EgressoDAO {
                 t.codigo,
                 t.nome
                 FROM egresso e 
-                JOIN aluno a ON a.cpf_pessoa = e.cpf_pessoa 
-                JOIN pessoa p ON a.cpf_pessoa = p.cpf 
-                JOIN turma t ON a.codigo_turma = t.codigo
-                ORDER BY p.nome
+                JOIN aluno a ON a.matricula = e.matricula 
+                JOIN pessoa p ON p.cpf = a.cpf_pessoa
+                JOIN turma t ON t.codigo = a.codigo_turma
+                ORDER BY p.nome;
                 """;
 
         try (Connection connection = Conexao.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
-                alunos.add(criarEgresso(rs));
+                egressos.add(criarEgresso(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar egressos.", e);
+            throw new DAOException(CodigoErro.ERRO_LISTAR, e);
         }
 
-        return alunos;
+        return egressos;
     }
 
     public ArrayList <Egresso> listarPorTurma(String codigo_turma){
@@ -284,10 +279,10 @@ public class EgressoDAO {
              ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
                 statement.setString(1,codigo_turma);
-                alunosTurma.add(criarEgresso(rs));
+                egressoTurma.add(criarEgresso(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar egressos de uma turma", e);
+            throw new DAOException(CodigoErro.ERRO_LISTAR_FILTRADO, e);
         }
 
         return egressoTurma;
@@ -344,7 +339,7 @@ public class EgressoDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao remover egresso: " + e.getMessage(), e);
+            throw new DAOException(CodigoErro.ERRO_REMOVER, e);
 
         } finally {
 

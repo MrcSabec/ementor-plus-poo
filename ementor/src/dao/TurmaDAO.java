@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.Conexao;
+import exception.CodigoErro;
+import exception.DAOException;
 import main.Turma;
 
 public class TurmaDAO {
@@ -39,7 +41,7 @@ public class TurmaDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao cadastrar turma.", e);
+            throw new DAOException(CodigoErro.ERRO_INSERIR, e);
 
         } finally {
 
@@ -81,7 +83,7 @@ public class TurmaDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao atualizar turma.", e);
+            throw new DAOException(CodigoErro.ERRO_ALTERAR, e);
         } finally {
             if (connection != null) {
                 try {
@@ -116,7 +118,7 @@ public class TurmaDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar turma", e);
+            throw new DAOException(CodigoErro.ERRO_BUSCAR, e);
         }
 
     }
@@ -146,7 +148,7 @@ public class TurmaDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar turma", e);
+            throw new DAOException(CodigoErro.ERRO_BUSCAR, e);
         }
 
     }
@@ -178,7 +180,7 @@ public class TurmaDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao remover turma: " + e.getMessage(), e);
+            throw new DAOException(CodigoErro.ERRO_REMOVER, e);
 
         } finally {
 
@@ -216,7 +218,7 @@ public class TurmaDAO {
                 turmas.add(turma);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar turmas.", e);
+            throw new DAOException(CodigoErro.ERRO_REMOVER, e);
         }
 
         return turmas;

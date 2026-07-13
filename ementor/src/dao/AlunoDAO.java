@@ -7,8 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.Conexao;
 
+import database.Conexao;
+import exception.CodigoErro;
+import exception.DAOException;
 import main.Aluno;
 import main.Turma;  
 
@@ -46,7 +48,7 @@ public class AlunoDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao cadastrar Aluno", e);
+            throw new DAOException(CodigoErro.ERRO_INSERIR, e);
         } finally {
             if (connection != null) {
                 try {
@@ -118,7 +120,7 @@ public class AlunoDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao atualizar aluno.", e);
+            throw new DAOException(CodigoErro.ERRO_ALTERAR, e);
         } finally {
             if (connection != null) {
                 try {
@@ -152,7 +154,7 @@ public class AlunoDAO {
                 System.out.println("Aluno não encontrado para atualizar as notas.");
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao atualizar notas do aluno.", e);
+            throw new DAOException(CodigoErro.ERRO_ATUALIZAR_NOTAS, e);
         }
     }
 
@@ -220,7 +222,7 @@ public class AlunoDAO {
                 return null;
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao buscar aluno.", e);
+            throw new DAOException(CodigoErro.ERRO_BUSCAR, e);
         }
     }
 
@@ -235,8 +237,6 @@ public class AlunoDAO {
                 FROM aluno a 
                 JOIN pessoa p ON a.cpf_pessoa = p.cpf 
                 JOIN turma t ON a.codigo_turma = t.codigo
-                LEFT JOIN egresso e ON a.cpf_pessoa = e.cpf_pessoa
-                WHERE e.cpf_pessoa IS NULL
                 ORDER BY p.nome
                 """;
 
@@ -247,7 +247,7 @@ public class AlunoDAO {
                 alunos.add(criarAluno(rs));
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar alunos.", e);
+            throw new DAOException(CodigoErro.ERRO_LISTAR, e);
         }
 
         return alunos;
@@ -275,7 +275,7 @@ public class AlunoDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar alunos de uma turma: " + e.getMessage(), e);
+            throw new DAOException(CodigoErro.ERRO_LISTAR_FILTRADO, e);
         }
 
         return alunosTurma;
@@ -306,7 +306,7 @@ public class AlunoDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao desvincular aluno da turma.", e);
+            throw new DAOException(CodigoErro.ERRO_DESVINCULAR_TURMA, e);
         } finally {
             if (connection != null) {
                 try {
@@ -356,7 +356,7 @@ public class AlunoDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao remover aluno: " + e.getMessage(), e);
+            throw new DAOException(CodigoErro.ERRO_REMOVER, e);
         } finally {
             if (connection != null) {
                 try {

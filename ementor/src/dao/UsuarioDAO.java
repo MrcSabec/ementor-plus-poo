@@ -7,6 +7,9 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 
 import java.util.List;
+
+import exception.*;
+
 import java.util.ArrayList;
 
 import main.Usuario;
@@ -28,7 +31,7 @@ public class UsuarioDAO {
                 usuario.setID(id);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(CodigoErro.ERRO_INSERIR, e);
         }
     }
     public void alterar(Usuario usuario) {
@@ -61,7 +64,7 @@ public class UsuarioDAO {
                 return resultSet.getInt("id");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(CodigoErro.ERRO_OBTER_ID, e);
         }
         return -1;
     }
@@ -78,7 +81,7 @@ public class UsuarioDAO {
                 System.out.println("Nenhum usuário encontrado com o ID fornecido.");
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(CodigoErro.ERRO_REMOVER, e);
         }
     }
 
@@ -99,7 +102,7 @@ public class UsuarioDAO {
                 return usuarioAutenticado;
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(CodigoErro.ERRO_AUTENTICAR_USUARIO, e);
         }
         return null;
     }
@@ -120,7 +123,7 @@ public class UsuarioDAO {
                 usuarios.add(usuario);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DAOException(CodigoErro.ERRO_LISTAR, e);
         }
         return usuarios;
     }
