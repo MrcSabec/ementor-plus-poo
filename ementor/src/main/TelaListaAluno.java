@@ -93,6 +93,10 @@ public class TelaListaAluno extends JFrame {
         btnEditar.setBackground(new Color(0, 200, 100));
         btnEditar.setForeground(Color.WHITE);
 
+        JButton btnRemover = new JButton("Remover");
+        btnRemover.setBackground(new Color(220, 53, 69)); // Vermelho
+        btnRemover.setForeground(Color.WHITE);
+
         // Configuração e carregamento dos ícones dos botões
         try {
 
@@ -108,6 +112,10 @@ public class TelaListaAluno extends JFrame {
             ImageIcon urlEditar = new  ImageIcon(getClass().getResource("/imagens/icone_editar.png"));
             Image urlEditarRedimensionada = urlEditar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(urlEditar != null) btnEditar.setIcon(new ImageIcon(urlEditarRedimensionada));
+            
+            ImageIcon urlRemover = new ImageIcon(getClass().getResource("/imagens/icone_excluir.png"));
+            Image urlRemoverRedimensionada = urlRemover.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            if(urlRemover != null) btnRemover.setIcon(new ImageIcon(urlRemoverRedimensionada));
         } catch (Exception ex) {
             System.out.println("Erro ao carregar ícones dos botões.");
         }
@@ -115,6 +123,7 @@ public class TelaListaAluno extends JFrame {
         painelBotoes.add(btnVoltar);
         painelBotoes.add(btnNotas);
         painelBotoes.add(btnEditar);
+        painelBotoes.add(btnRemover);
         add(painelBotoes, BorderLayout.SOUTH);
 
         // ==========================================
@@ -161,6 +170,42 @@ public class TelaListaAluno extends JFrame {
                     TelaAlterarAluno telaEditar = new TelaAlterarAluno(matriculaSelecionada);
                     telaEditar.setVisible(true);
                     dispose();
+                }
+            }
+        });
+
+        // Ação para Remover Aluno
+        btnRemover.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int linhaSelecionada = tabelaAlunos.getSelectedRow();
+
+                if (linhaSelecionada == -1) {
+                    JOptionPane.showMessageDialog(null, "Por favor, selecione um registro na tabela primeiro!", "Aviso", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    String matricula = (String) tabelaAlunos.getValueAt(linhaSelecionada, 0);
+                    int confirmacao = JOptionPane.showConfirmDialog(null, 
+                            "Tem certeza que deseja remover a matrícula " + matricula + "?", 
+                            "Confirmar Remoção", JOptionPane.YES_NO_OPTION);
+
+                    if (confirmacao == JOptionPane.YES_OPTION) {
+                        try {
+                            dao.AlunoDAO alunoDao = new dao.AlunoDAO();
+                            alunoDao.remover(matricula);
+                            JOptionPane.showMessageDialog(null, "Aluno removido com sucesso!");
+                            
+                            // Atualiza a tela
+                            dispose();
+                            new TelaListaAluno().setVisible(true);
+                        } catch (Exception ex) {
+                            String msg = ex.getMessage();
+                            if (msg != null && (msg.contains("foreign key constraint") || msg.contains("Cannot delete or update a parent row"))) {
+                                JOptionPane.showMessageDialog(null, "Não é possível remover este aluno pois ele possui notas vinculadas ou já se tornou egresso.", "Erro de Integridade", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Erro ao remover aluno: " + msg, "Erro", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    }
                 }
             }
         });

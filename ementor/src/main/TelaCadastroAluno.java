@@ -20,7 +20,7 @@ public class TelaCadastroAluno extends JFrame {
         painelTopo.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         try {
             ImageIcon iconeLogo = new ImageIcon(getClass().getResource("/imagens/logo.png"));
-            Image imgLogo = iconeLogo.getImage().getScaledInstance(388, 213, Image.SCALE_SMOOTH);
+            Image imgLogo = iconeLogo.getImage().getScaledInstance(182, 100, Image.SCALE_SMOOTH);
             JLabel lblLogo = new JLabel(new ImageIcon(imgLogo));
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);

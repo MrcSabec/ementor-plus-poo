@@ -141,3 +141,4 @@ CREATE TABLE `usuario` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2026-07-12 23:37:37
+INSERT IGNORE INTO `turma` (`codigo`, `nome`) VALUES ('000', '------');

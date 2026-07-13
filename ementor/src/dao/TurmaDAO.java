@@ -179,7 +179,7 @@ public class TurmaDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao remover turma.", e);
+            throw new RuntimeException("Erro ao remover turma: " + e.getMessage(), e);
 
         } finally {
 
@@ -205,11 +205,15 @@ public class TurmaDAO {
         try (Connection connection = Conexao.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql);
              ResultSet rs = statement.executeQuery()) {
+            AlunoDAO alunoDAO = new AlunoDAO();
             while (rs.next()) {
                 Turma turma = new Turma();
             
                 turma.setCodigo(rs.getString("codigo"));
                 turma.setNome(rs.getString("nome"));
+                
+                // Popula a lista de alunos para que a tela possa usar .size()
+                turma.setAlunos(alunoDAO.listarPorTurma(turma.getCodigo()));
 
                 turmas.add(turma);
             }

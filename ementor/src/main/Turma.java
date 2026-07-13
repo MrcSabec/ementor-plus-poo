@@ -33,6 +33,10 @@ public class Turma {
     public void setAlunos(ArrayList <Aluno> alunos) {
         this.alunos = alunos;
     }
+    
+    public ArrayList<Aluno> getAlunos() {
+        return alunos;
+    }
 
     public String toString(){
         return "Codigo:" + this.codigo + "Nome:" + this.nome;

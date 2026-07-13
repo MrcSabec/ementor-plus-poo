@@ -234,25 +234,67 @@ public class AlunoDAO {
         ArrayList <Aluno> alunosTurma = new ArrayList<>();
 
         String sql = """
-                SELECT * 
+                SELECT a.*, p.*, t.codigo, t.nome 
                 FROM aluno a 
                 JOIN pessoa p ON a.cpf_pessoa = p.cpf 
                 JOIN turma t ON t.codigo = a.codigo_turma 
-                ORDER BY p.nome 
-                WHERE a.codigo_turma = ?
+                WHERE a.codigo_turma = ? 
+                ORDER BY p.nome
                 """;
         try (Connection connection = Conexao.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet rs = statement.executeQuery()) {
-            while (rs.next()) {
-                statement.setString(1,codigo_turma);
-                alunosTurma.add(criarAluno(rs));
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            
+            statement.setString(1, codigo_turma);
+            
+            try (ResultSet rs = statement.executeQuery()) {
+                while (rs.next()) {
+                    alunosTurma.add(criarAluno(rs));
+                }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao listar alunos de uma turma", e);
+            throw new RuntimeException("Erro ao listar alunos de uma turma: " + e.getMessage(), e);
         }
 
         return alunosTurma;
+    }
+    
+    public void desvincularTurma(String matricula) {
+        Connection connection = null;
+        try {
+            connection = Conexao.getConnection();
+            connection.setAutoCommit(false);
+
+            // Atualiza para a turma placeholder '000' em vez de NULL
+            String sql = "UPDATE aluno SET codigo_turma = '000' WHERE matricula = ?";
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, matricula);
+                int rowsUpdated = statement.executeUpdate();
+                if (rowsUpdated > 0) {
+                    System.out.println("Aluno desvinculado com sucesso no banco de dados!");
+                } else {
+                    System.out.println("Aluno não encontrado para desvinculação.");
+                }
+            }
+            connection.commit();
+        } catch (SQLException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            throw new RuntimeException("Erro ao desvincular aluno da turma.", e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.setAutoCommit(true);
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
     
     private String buscarCpfPorMatricula(Connection connection, String matricula)
@@ -275,35 +317,16 @@ public class AlunoDAO {
         }
     }
     
-    public void remover(Connection connection,String matricula) {
+    public void remover(String matricula) {
+        Connection connection = null;
         try {
             connection = Conexao.getConnection();
             connection.setAutoCommit(false);
-            // Primeiro descobrir o CPF do aluno
-            String cpf = buscarCpfPorMatricula(connection, matricula);
-
-            if (cpf == null) {
-                throw new RuntimeException("Aluno não encontrado.");
-            }
-
-            // Remove da tabela aluno
-            String sql = "DELETE FROM aluno WHERE matricula = ?";
-
-            try (PreparedStatement statement = connection.prepareStatement(sql)) {
-
-                statement.setString(1, matricula);
-
-                statement.executeUpdate();
-            }
-
-            // Remove da tabela pessoa
-            PessoaDAO pessoaDAO = new PessoaDAO();
-            pessoaDAO.remover(connection, cpf);
-
+            
+            remover(connection, matricula);
+            
             connection.commit();
-
         } catch (SQLException e) {
-
             if (connection != null) {
                 try {
                     connection.rollback();
@@ -311,11 +334,8 @@ public class AlunoDAO {
                     ex.printStackTrace();
                 }
             }
-
-            throw new RuntimeException("Erro ao remover aluno.", e);
-
+            throw new RuntimeException("Erro ao remover aluno: " + e.getMessage(), e);
         } finally {
-
             if (connection != null) {
                 try {
                     connection.setAutoCommit(true);
@@ -325,5 +345,25 @@ public class AlunoDAO {
                 }
             }
         }
+    }
+
+    public void remover(Connection connection, String matricula) throws SQLException {
+        // Primeiro descobrir o CPF do aluno
+        String cpf = buscarCpfPorMatricula(connection, matricula);
+
+        if (cpf == null) {
+            throw new RuntimeException("Aluno não encontrado.");
+        }
+
+        // Remove da tabela aluno
+        String sql = "DELETE FROM aluno WHERE matricula = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, matricula);
+            statement.executeUpdate();
+        }
+
+        // Remove da tabela pessoa
+        PessoaDAO pessoaDAO = new PessoaDAO();
+        pessoaDAO.remover(connection, cpf);
     }
 }

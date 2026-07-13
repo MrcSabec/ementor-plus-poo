@@ -337,12 +337,9 @@ public class EgressoDAO {
                 stmtEgresso.executeUpdate();
             }
 
+            // A remoção de Aluno também remove de Pessoa em cascata internamente!
             AlunoDAO alunoDAO = new AlunoDAO();
             alunoDAO.remover(connection, matricula);
-
-            // Remove da tabela pessoa
-            PessoaDAO pessoaDAO = new PessoaDAO();
-            pessoaDAO.remover(connection, cpf);
 
             connection.commit();
 
@@ -356,7 +353,7 @@ public class EgressoDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao remover egresso.", e);
+            throw new RuntimeException("Erro ao remover egresso: " + e.getMessage(), e);
 
         } finally {
 

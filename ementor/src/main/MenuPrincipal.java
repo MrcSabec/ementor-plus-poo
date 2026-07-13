@@ -9,7 +9,7 @@ public class MenuPrincipal extends JFrame {
 
     public MenuPrincipal() {
         setTitle("eMentor-Plus - Menu Principal");
-        setSize(800, 600); // Configura o tamanho da tela
+        setSize(800, 720); // Aumentado para comportar a nova linha sem espremer
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Encerra o sistema ao fechar
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -40,10 +40,10 @@ public class MenuPrincipal extends JFrame {
         add(painelTopo, BorderLayout.NORTH);
 
         // ==========================================
-        // CENTRO: GRADE DE BOTÕES (3x3)
+        // CENTRO: GRADE DE BOTÕES (4x3)
         // ==========================================
-        // Define o layout do painel de botões
-        JPanel painelBotoes = new JPanel(new GridLayout(3, 3, 15, 15));
+        // Define o layout do painel de botões: 4 linhas (entidades) e 3 colunas (operações)
+        JPanel painelBotoes = new JPanel(new GridLayout(4, 3, 20, 20)); // Espaçamento aumentado
         painelBotoes.setBorder(BorderFactory.createEmptyBorder(20, 30, 30, 30));
 
         // Criação dos botões de ação
@@ -59,18 +59,30 @@ public class MenuPrincipal extends JFrame {
         JButton btnCadProfessor = criarBotaoMenu("Cadastrar Professor", "/imagens/cad_professor.png");
         JButton btnListarProfessor = criarBotaoMenuLST("Listar Professor", "/imagens/list_professor.png");
         JButton btnAlterarProfessor = criarBotaoMenuALT("Alterar Professor", "/imagens/alt_professor.png");
+
+        JButton btnCadTurma = criarBotaoMenu("Cadastrar Turma", "/imagens/cad_turma.png");
+        JButton btnListarTurma = criarBotaoMenuLST("Listar Turma", "/imagens/list_turma.png");
+        JButton btnAlterarTurma = criarBotaoMenuALT("Alterar Turma", "/imagens/alt_turma.png");
         
+        // Linha 1: Aluno
         painelBotoes.add(btnCadAluno);
         painelBotoes.add(btnListarAluno);
         painelBotoes.add(btnAlterarAluno);
 
+        // Linha 2: Egresso
         painelBotoes.add(btnCadEgresso);
         painelBotoes.add(btnListarEgresso);
         painelBotoes.add(btnAlterarEgresso);
 
+        // Linha 3: Professor
         painelBotoes.add(btnCadProfessor);
         painelBotoes.add(btnListarProfessor);
         painelBotoes.add(btnAlterarProfessor);
+
+        // Linha 4: Turma
+        painelBotoes.add(btnCadTurma);
+        painelBotoes.add(btnListarTurma);
+        painelBotoes.add(btnAlterarTurma);
 
         add(painelBotoes, BorderLayout.CENTER);
 
@@ -82,6 +94,7 @@ public class MenuPrincipal extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Aqui você vai instanciar a próxima tela
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Cadastrar Aluno...");
+                dispose();
                 TelaCadastroAluno telaCad = new TelaCadastroAluno();
                 telaCad.setVisible(true);
             }
@@ -92,6 +105,7 @@ public class MenuPrincipal extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Aqui você vai instanciar a próxima tela
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Lista dos Alunos...");
+                dispose();
                 TelaListaAluno telaList = new TelaListaAluno();
                 telaList.setVisible(true);
             }
@@ -101,6 +115,7 @@ public class MenuPrincipal extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Aqui você vai instanciar a próxima tela
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Edição de Alunos...");
+                dispose();
                 TelaAlterarAluno telaAltera = new TelaAlterarAluno();
                 telaAltera.setVisible(true);
             }
@@ -110,6 +125,7 @@ public class MenuPrincipal extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Aqui você vai instanciar a próxima tela
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Cadastrar Egresso...");
+                dispose();
                 TelaCadastroEgresso telaCad = new TelaCadastroEgresso();
                 telaCad.setVisible(true);
             }
@@ -119,6 +135,7 @@ public class MenuPrincipal extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Lista dos Egressos...");
+                dispose();
                 TelaListaEgresso telaList = new TelaListaEgresso();
                 telaList.setVisible(true);
             }
@@ -128,12 +145,71 @@ public class MenuPrincipal extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(null, "Abrindo tela de Edição de Egressos...");
+                dispose();
                 TelaAlterarEgresso telaAltera = new TelaAlterarEgresso();
                 telaAltera.setVisible(true);
             }
         });
         
-        // Repita o addActionListener para os outros botões...
+        btnCadProfessor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Abrindo tela de Cadastrar Professor...");
+                dispose();
+                TelaCadastroProfessor telaCad = new TelaCadastroProfessor();
+                telaCad.setVisible(true);
+            }
+        });
+        
+        btnListarProfessor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Abrindo tela de Lista de Professores...");
+                dispose();
+                TelaListaProfessor telaList = new TelaListaProfessor();
+                telaList.setVisible(true);
+            }
+        });
+
+        btnAlterarProfessor.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Abrindo tela de Edição de Professores...");
+                dispose();
+                TelaAlterarProfessor telaAltera = new TelaAlterarProfessor();
+                telaAltera.setVisible(true);
+            }
+        });
+
+        btnCadTurma.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Abrindo tela de Cadastrar Turma...");
+                dispose();
+                TelaCadastroTurma telaCad = new TelaCadastroTurma();
+                telaCad.setVisible(true);
+            }
+        });
+
+        btnListarTurma.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Abrindo tela de Lista das Turmas...");
+                dispose();
+                TelaListaTurma telaList = new TelaListaTurma();
+                telaList.setVisible(true);
+            }
+        });
+
+        btnAlterarTurma.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(null, "Abrindo tela de Edição de Turmas...");
+                dispose();
+                TelaAlterarTurma telaAltera = new TelaAlterarTurma();
+                telaAltera.setVisible(true);
+            }
+        });
     }
 
 

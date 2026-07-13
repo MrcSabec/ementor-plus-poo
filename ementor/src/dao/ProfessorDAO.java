@@ -13,6 +13,16 @@ import main.Professor;
 
 public class ProfessorDAO {
 
+    public boolean existe(Connection connection, String cpf_pessoa) throws SQLException {
+        String sql = "SELECT cpf_pessoa FROM professor WHERE cpf_pessoa = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, cpf_pessoa);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
 
     //Função responsavel por inserir um professor no banco de dados
     public void inserir(Professor professor) {
@@ -21,30 +31,50 @@ public class ProfessorDAO {
             connection = Conexao.getConnection();
             // Inicia a transação
             connection.setAutoCommit(false);
+            // 1. Verifica e Upsert Pessoa
             PessoaDAO pessoaDAO = new PessoaDAO();
-            pessoaDAO.inserir(connection, professor);
+            if (pessoaDAO.buscar(connection, professor.getCpf()) != null) {
+                pessoaDAO.atualizar(connection, professor);
+            } else {
+                pessoaDAO.inserir(connection, professor);
+            }
 
-            String sql = """
-            INSERT INTO professor
-            (cpf_pessoa, data_admissao, cargo_chefia,
-            cargo_coordenacao, salario_bruto)
-            VALUES (?, ?, ?, ?, ?)
-            """;
+            // 2. Verifica e Upsert Professor
+            if (existe(connection, professor.getCpf())) {
+                String sqlUpdate = """
+                    UPDATE professor 
+                    SET data_admissao = ?, cargo_chefia = ?, cargo_coordenacao = ?, salario_bruto = ? 
+                    WHERE cpf_pessoa = ?
+                    """;
+                try (PreparedStatement statement = connection.prepareStatement(sqlUpdate)) {
+                    statement.setDate(1, new java.sql.Date(professor.getDataAdmissao().getTime()));
+                    statement.setInt(2, professor.getCargoChefia() ? 1 : 0);
+                    statement.setInt(3, professor.getCargoCoordenacao() ? 1 : 0);
+                    statement.setDouble(4, professor.getSalarioBruto());
+                    statement.setString(5, professor.getCpf());
+                    statement.executeUpdate();
+                }
+                System.out.println("Professor atualizado com sucesso no banco de dados!");
+            } else {
+                String sql = """
+                INSERT INTO professor
+                (cpf_pessoa, data_admissao, cargo_chefia,
+                cargo_coordenacao, salario_bruto)
+                VALUES (?, ?, ?, ?, ?)
+                """;
 
-            try (PreparedStatement statementprofessor =
-                        connection.prepareStatement(sql)) {
-
-                statementprofessor.setString(1, professor.getCpf());
-                statementprofessor.setDate(2, new java.sql.Date(professor.getDataAdmissao().getTime()));
-                statementprofessor.setBoolean(3, professor.getCargoChefia());
-                statementprofessor.setBoolean(4, professor.getCargoCoordenacao());
-                statementprofessor.setDouble(5, professor.getSalarioBruto());
-                
-                statementprofessor.executeUpdate();
+                try (PreparedStatement statementprofessor = connection.prepareStatement(sql)) {
+                    statementprofessor.setString(1, professor.getCpf());
+                    statementprofessor.setDate(2, new java.sql.Date(professor.getDataAdmissao().getTime()));
+                    statementprofessor.setInt(3, professor.getCargoChefia() ? 1 : 0);
+                    statementprofessor.setInt(4, professor.getCargoCoordenacao() ? 1 : 0);
+                    statementprofessor.setDouble(5, professor.getSalarioBruto());
+                    
+                    statementprofessor.executeUpdate();
+                }
+                System.out.println("Professor cadastrado com sucesso!");
             }
             connection.commit();
-
-            System.out.println("professor cadastrado com sucesso!");
 
         } catch (SQLException e) {
 
@@ -56,7 +86,7 @@ public class ProfessorDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao cadastrar professor.", e);
+            throw new RuntimeException("Erro ao cadastrar professor: " + e.getMessage(), e);
 
         } finally {
 
@@ -70,32 +100,37 @@ public class ProfessorDAO {
             }
         }
     }
-    //Funcao responsavel por alterar os dados de um professor do banco de dados, atraves da matricula informada no professor
-    public void alterar(Connection connection, Professor professor){
+    //Funcao responsavel por alterar os dados de um professor do banco de dados, atraves do cpf
+    public void alterar(Professor professor){
+        Connection connection = null;
         try{
             connection = Conexao.getConnection();
             connection.setAutoCommit(false);
+            
             PessoaDAO pessoaDAO = new PessoaDAO();
-            pessoaDAO.atualizar(connection, professor);
+            if (pessoaDAO.buscar(connection, professor.getCpf()) != null) {
+                pessoaDAO.atualizar(connection, professor);
+            } else {
+                pessoaDAO.inserir(connection, professor);
+            }
             
-            String sql = """
-                UPDATE professor 
-                SET data_admissao = ?, cargo_chefia = ?,cargo_coordenacao = ?, salario_bruto = ? WHERE cpf_pessoa = ?
-                """;
-            
+            if (existe(connection, professor.getCpf())) {
+                String sql = """
+                    UPDATE professor 
+                    SET data_admissao = ?, cargo_chefia = ?,cargo_coordenacao = ?, salario_bruto = ? WHERE cpf_pessoa = ?
+                    """;
                 try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setDate(1, new java.sql.Date(professor.getDataAdmissao().getTime()));
-                statement.setBoolean(2, professor.getCargoChefia());
-                statement.setBoolean(3, professor.getCargoCoordenacao());
-                statement.setDouble(4, professor.getSalarioBruto());
-                statement.setString(5,professor.getCpf());
-                int rowsUpdated = statement.executeUpdate();
-                if (rowsUpdated > 0) {
-                    System.out.println("professor atualizado com sucesso no banco de dados!");
-                } else {
-                    System.out.println("professor não encontrado no banco de dados.");
+                    statement.setDate(1, new java.sql.Date(professor.getDataAdmissao().getTime()));
+                    statement.setInt(2, professor.getCargoChefia() ? 1 : 0);
+                    statement.setInt(3, professor.getCargoCoordenacao() ? 1 : 0);
+                    statement.setDouble(4, professor.getSalarioBruto());
+                    statement.setString(5,professor.getCpf());
+                    statement.executeUpdate();
                 }
-            } 
+                System.out.println("Professor atualizado com sucesso no banco de dados!");
+            } else {
+                System.out.println("Professor não encontrado no banco de dados.");
+            }
             connection.commit();
         } catch (SQLException e) {
             if (connection != null) {
@@ -105,7 +140,7 @@ public class ProfessorDAO {
                     ex.printStackTrace();
                 }
             }
-            throw new RuntimeException("Erro ao atualizar professor.", e);
+            throw new RuntimeException("Erro ao atualizar professor: " + e.getMessage(), e);
         } finally {
             if (connection != null) {
                 try {
@@ -133,8 +168,8 @@ public class ProfessorDAO {
         professor.setEstado(rs.getString("estado"));
 
         professor.setSalarioBruto(rs.getDouble("salario_bruto"));
-        professor.setCargoChefia(rs.getBoolean("cargo_chefia"));
-        professor.setCargoCoordenacao(rs.getBoolean("cargo_coordenacao"));
+        professor.setCargoChefia(rs.getInt("cargo_chefia") == 1);
+        professor.setCargoCoordenacao(rs.getInt("cargo_coordenacao") == 1);
         professor.setDataAdmissao(rs.getDate("data_admissao"));
 
         return professor;
@@ -197,7 +232,7 @@ public class ProfessorDAO {
             connection.setAutoCommit(false);
 
             // Remove da tabela professor
-            String sql = "DELETE FROM professor WHERE matricula = ?";
+            String sql = "DELETE FROM professor WHERE cpf_pessoa = ?";
 
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -222,7 +257,7 @@ public class ProfessorDAO {
                 }
             }
 
-            throw new RuntimeException("Erro ao remover professor.", e);
+            throw new RuntimeException("Erro ao remover professor: " + e.getMessage(), e);
 
         } finally {
 

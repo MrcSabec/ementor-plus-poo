@@ -31,7 +31,7 @@ public class TelaCadastroEgresso extends JFrame {
         
         try {
             ImageIcon iconeLogo = new ImageIcon(getClass().getResource("/imagens/logo.png"));
-            Image imgLogo = iconeLogo.getImage().getScaledInstance(90, 90, Image.SCALE_SMOOTH);
+            Image imgLogo = iconeLogo.getImage().getScaledInstance(182, 100, Image.SCALE_SMOOTH);
             JLabel lblLogo = new JLabel(new ImageIcon(imgLogo));
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
