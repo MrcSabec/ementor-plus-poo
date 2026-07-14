@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -33,6 +36,7 @@ public class TelaAlterarEgresso extends JFrame {
         try {
             listaEgressos = new EgressoDAO().listarEgressos();
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar lista de egressos: " + ex.getMessage());
         }
 
@@ -46,6 +50,7 @@ public class TelaAlterarEgresso extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.NORTH);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Logo não encontrada.");
         }
 
@@ -108,6 +113,7 @@ public class TelaAlterarEgresso extends JFrame {
                 cbTurma.addItem(t);
             }
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar turmas.");
         }
 
@@ -157,6 +163,7 @@ public class TelaAlterarEgresso extends JFrame {
             Image imgNotas = iconNotas.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
             btnAtribuirNotas.setIcon(new ImageIcon(imgNotas));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone de notas não encontrado.");
         }
         painelAcaoNotas.add(btnAtribuirNotas);
@@ -198,6 +205,7 @@ public class TelaAlterarEgresso extends JFrame {
             Image imgSalvar = iconSalvar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(iconSalvar != null) btnSalvar.setIcon(new ImageIcon(imgSalvar));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Ícones não encontrados.");
         }
 
@@ -317,6 +325,7 @@ public class TelaAlterarEgresso extends JFrame {
                                 try {
                                     egressoCarregado.setNascimento(new SimpleDateFormat("dd/MM/yyyy").parse(txtDataNasc.getText()));
                                 } catch (Exception parseEx) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, parseEx);
                                 }
 
                                 barraProgresso.setValue(60);
@@ -338,6 +347,7 @@ public class TelaAlterarEgresso extends JFrame {
                                 new MenuPrincipal().setVisible(true);
 
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             dialogProgresso.dispose();
                             btnSalvar.setEnabled(true);
                             JOptionPane.showMessageDialog(null, "Erro na alteração: " + ex.getMessage());
@@ -414,6 +424,7 @@ public class TelaAlterarEgresso extends JFrame {
                 Image imgRedimensionada = iconeOriginal.getImage().getScaledInstance(14, 14, Image.SCALE_SMOOTH);
                 label.setIcon(new ImageIcon(imgRedimensionada));
             } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             }
         }
         

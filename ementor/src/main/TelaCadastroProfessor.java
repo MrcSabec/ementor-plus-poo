@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,6 +31,7 @@ public class TelaCadastroProfessor extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Logo não encontrada.");
         }
         JLabel lblTitulo = new JLabel("Cadastro de Professor", SwingConstants.CENTER);
@@ -110,6 +114,7 @@ public class TelaCadastroProfessor extends JFrame {
             Image imgSalvar = iconSalvar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(iconSalvar != null) btnSalvar.setIcon(new ImageIcon(imgSalvar));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Ícones não encontrados.");
         }
 
@@ -206,6 +211,7 @@ public class TelaCadastroProfessor extends JFrame {
                             new MenuPrincipal().setVisible(true);
 
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             dialogProgresso.dispose();
                             btnSalvar.setEnabled(true);
                             JOptionPane.showMessageDialog(null, "Erro ao salvar: " + (ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage()));
@@ -215,8 +221,10 @@ public class TelaCadastroProfessor extends JFrame {
                     threadSalvamento.start();
 
                 } catch (NumberFormatException ex) {
+            LogErro.registrar(CodigoErro.ERRO_DADOS, ex);
                     JOptionPane.showMessageDialog(null, "Por favor, digite valores numéricos válidos nos campos de salário (ex: 2500.50).", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 } catch (java.text.ParseException ex) {
+            LogErro.registrar(CodigoErro.ERRO_DADOS, ex);
                     JOptionPane.showMessageDialog(null, "Data de Admissão inválida! Use o formato dd/MM/yyyy.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 }
             }

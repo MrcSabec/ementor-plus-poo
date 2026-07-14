@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -29,6 +32,7 @@ public class TelaListaEgresso extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Logo não encontrada.");
         }
         JLabel lblTitulo = new JLabel("Lista de Egressos Cadastrados", SwingConstants.CENTER);
@@ -71,6 +75,7 @@ public class TelaListaEgresso extends JFrame {
                 });
             }
         } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             JOptionPane.showMessageDialog(null, "Erro ao carregar os egressos: " + e.getMessage());
         }
 
@@ -111,6 +116,7 @@ public class TelaListaEgresso extends JFrame {
             Image urlRemoverRedimensionada = urlRemover.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(urlRemover != null) btnRemover.setIcon(new ImageIcon(urlRemoverRedimensionada));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar ícones dos botões.");
         }
 
@@ -187,6 +193,7 @@ public class TelaListaEgresso extends JFrame {
                             dispose();
                             new TelaListaEgresso().setVisible(true);
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             String msg = ex.getMessage();
                             if (msg != null && (msg.contains("foreign key constraint") || msg.contains("Cannot delete or update a parent row"))) {
                                 JOptionPane.showMessageDialog(null, "Não é possível remover este egresso por restrições de integridade no banco de dados.", "Erro de Integridade", JOptionPane.ERROR_MESSAGE);

@@ -1,3 +1,5 @@
+import exception.LogErro;
+import exception.CodigoErro;
 package  main;
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +27,7 @@ public class TelaCadastroAluno extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar a logo.");
         }
         add(painelTopo, BorderLayout.NORTH);
@@ -87,6 +90,7 @@ public class TelaCadastroAluno extends JFrame {
             Image imagemVoltarRedimensionada = iconeVoltarOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             btnVoltar.setIcon(new ImageIcon(imagemVoltarRedimensionada));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone voltar não encontrado.");
         }
         btnVoltar.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -100,6 +104,7 @@ public class TelaCadastroAluno extends JFrame {
             Image imagemSalvarRedimensionada = iconeSalvarOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             btnSalvar.setIcon(new ImageIcon(imagemSalvarRedimensionada));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone salvar não encontrado.");
         }
         btnSalvar.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -194,6 +199,7 @@ public class TelaCadastroAluno extends JFrame {
                                 MenuPrincipal menu = new MenuPrincipal();
                                 menu.setVisible(true);
                             } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                                 dialogProgresso.dispose();
                                 btnSalvar.setEnabled(true);
                                 JOptionPane.showMessageDialog(null, "Erro ao salvar no banco: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -205,12 +211,15 @@ public class TelaCadastroAluno extends JFrame {
                     threadSalvamento.start();
                     
                 } catch (NumberFormatException ex) {
+            LogErro.registrar(CodigoErro.ERRO_DADOS, ex);
                     JOptionPane.showMessageDialog(null, "Por favor, digite apenas números no campo Período.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                     btnSalvar.setEnabled(true);
                 } catch (java.text.ParseException ex) {
+            LogErro.registrar(CodigoErro.ERRO_DADOS, ex);
                     JOptionPane.showMessageDialog(null, "Data de Nascimento inválida! Use o formato dd/MM/yyyy.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                     btnSalvar.setEnabled(true);
                 } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                     JOptionPane.showMessageDialog(null, "Erro inesperado: " + ex.getMessage());
                     btnSalvar.setEnabled(true);
                 }

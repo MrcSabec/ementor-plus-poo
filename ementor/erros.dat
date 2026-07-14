@@ -27,3 +27,27 @@ Código: 1004
 Descrição: Erro durante remoção
 Mensagem: Unknown column 'cpff' in 'where clause'
 
+================================
+2026-07-14T08:41:32.437343805
+Código: 1006
+Descrição: Erro ao listar campos do banco de dados
+Mensagem: Unknown column 'e.matricula' in 'on clause'
+
+================================
+2026-07-14T08:41:43.809562158
+Código: 1006
+Descrição: Erro ao listar campos do banco de dados
+Mensagem: Unknown column 'e.matricula' in 'on clause'
+
+================================
+2026-07-14T08:41:48.136015530
+Código: 1006
+Descrição: Erro ao listar campos do banco de dados
+Mensagem: Unknown column 'e.matricula' in 'on clause'
+
+================================
+2026-07-14T08:42:26.945116632
+Código: 1006
+Descrição: Erro ao listar campos do banco de dados
+Mensagem: Unknown column 'e.matricula' in 'on clause'
+

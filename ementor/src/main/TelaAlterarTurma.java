@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import dao.TurmaDAO;
 import dao.AlunoDAO;
 import javax.swing.*;
@@ -49,6 +52,7 @@ public class TelaAlterarTurma extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.NORTH);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar a logo.");
         }
 
@@ -67,6 +71,7 @@ public class TelaAlterarTurma extends JFrame {
             Image imgLupa = iconeLupa.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
             btnBuscar.setIcon(new ImageIcon(imgLupa));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone lupa não encontrado.");
         }
 
@@ -139,6 +144,7 @@ public class TelaAlterarTurma extends JFrame {
             Image imgDesvincular = iconDesvincular.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
             btnDesvincular.setIcon(new ImageIcon(imgDesvincular));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone excluir não encontrado.");
         }
         painelAcaoTabela.add(btnDesvincular);
@@ -172,6 +178,7 @@ public class TelaAlterarTurma extends JFrame {
             Image imgSalvar = iconSalvar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             btnSalvar.setIcon(new ImageIcon(imgSalvar));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar ícones do rodapé.");
         }
 
@@ -238,6 +245,7 @@ public class TelaAlterarTurma extends JFrame {
                         // Atualiza a tabela na interface
                         carregarAlunosNaTabela(txtCodigo.getText());
                     } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                         JOptionPane.showMessageDialog(null, "Erro ao desvincular aluno: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                         registrarErroLog("Desvincular: " + ex.getMessage());
                     }
@@ -291,6 +299,7 @@ public class TelaAlterarTurma extends JFrame {
                             dispose();
                             new TelaListaTurma().setVisible(true); // Redireciona para a listagem
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             dialogProgresso.dispose();
                             btnSalvar.setEnabled(true);
                             JOptionPane.showMessageDialog(null, "Erro ao atualizar turma: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -308,6 +317,7 @@ public class TelaAlterarTurma extends JFrame {
             TurmaDAO dao = new TurmaDAO();
             listaTurmas = dao.listarTurmas();
         } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             System.out.println("Erro ao carregar lista para navegação: " + e.getMessage());
         }
     }
@@ -330,6 +340,7 @@ public class TelaAlterarTurma extends JFrame {
                 limparFormulario();
             }
         } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             JOptionPane.showMessageDialog(this, "Erro na busca: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -356,6 +367,7 @@ public class TelaAlterarTurma extends JFrame {
                 });
             }
         } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             System.out.println("Erro ao carregar alunos na tabela: " + e.getMessage());
         }
     }
@@ -395,6 +407,7 @@ public class TelaAlterarTurma extends JFrame {
             String dataFormatada = dataHoraAtual.format(new Date());
             writer.write("[" + dataFormatada + "] Erro na TelaAlterarTurma: " + mensagemErro + "\n");
         } catch (IOException e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             System.out.println("Erro ao tentar gravar no arquivo de log: " + e.getMessage());
         }
     }

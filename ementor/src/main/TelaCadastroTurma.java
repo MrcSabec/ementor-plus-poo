@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -28,6 +31,7 @@ public class TelaCadastroTurma extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar a logo.");
         }
         add(painelTopo, BorderLayout.NORTH);
@@ -54,6 +58,7 @@ public class TelaCadastroTurma extends JFrame {
             Image imagemVoltarRedimensionada = iconeVoltarOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             btnVoltar.setIcon(new ImageIcon(imagemVoltarRedimensionada));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone voltar não encontrado.");
         }
         btnVoltar.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -67,6 +72,7 @@ public class TelaCadastroTurma extends JFrame {
             Image imagemSalvarRedimensionada = iconeSalvarOriginal.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             btnSalvar.setIcon(new ImageIcon(imagemSalvarRedimensionada));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone salvar não encontrado.");
         }
         btnSalvar.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -141,6 +147,7 @@ public class TelaCadastroTurma extends JFrame {
                             dispose(); // Fecha a janela
                             new MenuPrincipal().setVisible(true);
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             dialogProgresso.dispose();
                             btnSalvar.setEnabled(true);
                             JOptionPane.showMessageDialog(null, "Erro ao salvar turma: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
@@ -170,6 +177,7 @@ public class TelaCadastroTurma extends JFrame {
             String dataFormatada = dataHoraAtual.format(new Date());
             writer.write("[" + dataFormatada + "] Erro: " + mensagemErro + "\n");
         } catch (IOException e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             System.out.println("Erro ao tentar gravar no arquivo de log: " + e.getMessage());
         }
     }

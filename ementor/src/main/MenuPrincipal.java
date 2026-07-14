@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -31,6 +34,7 @@ public class MenuPrincipal extends JFrame {
             painelTopo.add(lblLogo, BorderLayout.CENTER);
 
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar a logo do topo.");
         }
 
@@ -88,6 +92,7 @@ public class MenuPrincipal extends JFrame {
             Image imgPdf = iconePdf.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             btnGerarRelatorio.setIcon(new ImageIcon(imgPdf));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone PDF não encontrado.");
         }
         painelRodape.add(btnGerarRelatorio);
@@ -269,6 +274,7 @@ public class MenuPrincipal extends JFrame {
                                 JOptionPane.showMessageDialog(null, "Relatório PDF gerado com sucesso em:\n" + caminhoFinal);
 
                             } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                                 dialogProgresso.dispose();
                                 JOptionPane.showMessageDialog(null, "Erro ao gerar PDF: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
                             } finally {
@@ -299,6 +305,7 @@ public class MenuPrincipal extends JFrame {
             botao.setIcon(new ImageIcon(img));
 
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone não encontrado: " + caminhoIcone);
         }
 
@@ -320,6 +327,7 @@ public class MenuPrincipal extends JFrame {
             botao.setIcon(new ImageIcon(img));
 
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone não encontrado: " + caminhoIcone);
         }
 
@@ -341,6 +349,7 @@ private JButton criarBotaoMenuALT(String texto, String caminhoIcone) {
         botao.setIcon(new ImageIcon(img));
 
     } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
         System.out.println("Ícone não encontrado: " + caminhoIcone);
     }
 

@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -38,6 +41,7 @@ public class TelaNotasAluno extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Logo não encontrada.");
         }
 
@@ -103,6 +107,7 @@ public class TelaNotasAluno extends JFrame {
             Image iconSalvarRedimensionada = iconSalvar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(iconSalvar != null) btnSalvar.setIcon(new ImageIcon(iconSalvarRedimensionada));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar ícones dos botões.");
         }
 
@@ -185,10 +190,12 @@ public class TelaNotasAluno extends JFrame {
                             }
 
                         } catch (NumberFormatException ex) {
+            LogErro.registrar(CodigoErro.ERRO_DADOS, ex);
                             dialogProgresso.dispose();
                             btnSalvar.setEnabled(true);
                             JOptionPane.showMessageDialog(null, "Por favor, digite apenas números válidos nas notas (ex: 8.5).", "Erro de Preenchimento", JOptionPane.ERROR_MESSAGE);
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             dialogProgresso.dispose();
                             btnSalvar.setEnabled(true);
                             JOptionPane.showMessageDialog(null, "Erro inesperado: " + ex.getMessage());

@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -36,6 +39,7 @@ public class TelaCadastroEgresso extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Logo não encontrada.");
         }
         
@@ -77,6 +81,7 @@ public class TelaCadastroEgresso extends JFrame {
                 cbTurma.addItem(t);
             }
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar turmas.");
         }
 
@@ -136,6 +141,7 @@ public class TelaCadastroEgresso extends JFrame {
                 btnSalvar.setIcon(new ImageIcon(img));
             }
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Ícones não encontrados.");
         }
 
@@ -231,6 +237,7 @@ public class TelaCadastroEgresso extends JFrame {
                             new MenuPrincipal().setVisible(true);
 
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             dialogProgresso.dispose();
                             btnSalvar.setEnabled(true);
                             String causa = ex.getCause() != null ? ex.getCause().getMessage() : ex.getMessage();
@@ -240,8 +247,10 @@ public class TelaCadastroEgresso extends JFrame {
                     threadSalvamento.start();
 
                 } catch (NumberFormatException ex) {
+            LogErro.registrar(CodigoErro.ERRO_DADOS, ex);
                     JOptionPane.showMessageDialog(null, "Por favor, digite valores numéricos válidos para Período e Faixa Salarial.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 } catch (java.text.ParseException ex) {
+            LogErro.registrar(CodigoErro.ERRO_DADOS, ex);
                     JOptionPane.showMessageDialog(null, "Data de Nascimento inválida! Use o formato dd/MM/yyyy.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -270,7 +279,8 @@ public class TelaCadastroEgresso extends JFrame {
             Image imgChave = iconeChave.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
             JLabel lblIcone = new JLabel(new ImageIcon(imgChave));
             painelLabel.add(lblIcone);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);}
         
         JLabel label = new JLabel(textoLabel);
         label.setFont(fonte);

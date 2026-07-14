@@ -21,7 +21,13 @@ public enum CodigoErro {
 
     ERRO_OBTER_ID(1010, "Erro ao obter ID"),
 
-    ERRO_AUTENTICAR_USUARIO(1011,"Erro ao autenticar um usuario");
+    ERRO_AUTENTICAR_USUARIO(1011,"Erro ao autenticar um usuario"),
+    
+    ERRO_INTERFACE(2001, "Erro no carregamento visual da interface"),
+    
+    ERRO_DADOS(2002, "Erro de formatacao ou validacao de dados"),
+    
+    ERRO_SISTEMA(2003, "Erro generico de sistema");
 
     private final int codigo;
     private final String descricao;

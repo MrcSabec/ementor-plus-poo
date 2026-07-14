@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -198,6 +201,7 @@ public class GeradorRelatorioPDF {
             registrarErroLog("Falha ao gerar PDF: " + e.getMessage());
             throw new RuntimeException("Erro ao gerar PDF: " + e.getMessage(), e);
         } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             registrarErroLog("Erro inesperado na geração do relatório: " + e.getMessage());
             throw new RuntimeException("Erro inesperado: " + e.getMessage(), e);
         }
@@ -209,6 +213,7 @@ public class GeradorRelatorioPDF {
             String dataFormatada = dataHoraAtual.format(new Date());
             writer.write("[" + dataFormatada + "] Erro: " + mensagemErro + "\n");
         } catch (IOException e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             System.out.println("Erro Crítico: Não foi possível gravar o log de erro físico. " + e.getMessage());
         }
     }

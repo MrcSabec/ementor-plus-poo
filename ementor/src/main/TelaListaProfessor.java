@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -30,6 +33,7 @@ public class TelaListaProfessor extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Logo não encontrada.");
         }
         JLabel lblTitulo = new JLabel("Lista de Professores Cadastrados", SwingConstants.CENTER);
@@ -87,6 +91,7 @@ public class TelaListaProfessor extends JFrame {
                 });
             }
         } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             JOptionPane.showMessageDialog(null, "Erro ao carregar os professores do banco de dados: " + e.getMessage());
         }
 
@@ -119,6 +124,7 @@ public class TelaListaProfessor extends JFrame {
             Image urlRemoverRedimensionada = urlRemover.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(urlRemover != null) btnRemover.setIcon(new ImageIcon(urlRemoverRedimensionada));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar ícones dos botões.");
         }
 
@@ -179,6 +185,7 @@ public class TelaListaProfessor extends JFrame {
                             dispose();
                             new TelaListaProfessor().setVisible(true);
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             String msg = ex.getMessage();
                             if (msg != null && (msg.contains("foreign key constraint") || msg.contains("Cannot delete or update a parent row"))) {
                                 JOptionPane.showMessageDialog(null, "Não é possível remover este professor por restrições de integridade no banco de dados.", "Erro de Integridade", JOptionPane.ERROR_MESSAGE);

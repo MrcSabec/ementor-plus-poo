@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -34,6 +37,7 @@ public class TelaAlterarAluno extends JFrame {
         try {
             listaAlunos = new AlunoDAO().listarAlunos();
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar lista de alunos: " + ex.getMessage());
         }
 
@@ -48,6 +52,7 @@ public class TelaAlterarAluno extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.NORTH);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Logo não encontrada.");
         }
 
@@ -113,6 +118,7 @@ public class TelaAlterarAluno extends JFrame {
                 cbTurma.addItem(t);
             }
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar turmas.");
         }
 
@@ -157,6 +163,7 @@ public class TelaAlterarAluno extends JFrame {
             Image imgNotas = iconNotas.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
             btnAtribuirNotas.setIcon(new ImageIcon(imgNotas));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Ícone de notas não encontrado.");
         }
         painelAcaoNotas.add(btnAtribuirNotas);
@@ -193,6 +200,7 @@ public class TelaAlterarAluno extends JFrame {
             Image imgSalvar = iconSalvar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(iconSalvar != null) btnSalvar.setIcon(new ImageIcon(imgSalvar));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Ícones não encontrados.");
         }
 
@@ -311,6 +319,7 @@ public class TelaAlterarAluno extends JFrame {
                                 try {
                                     alunoCarregado.setNascimento(new SimpleDateFormat("dd/MM/yyyy").parse(txtDataNasc.getText()));
                                 } catch (Exception parseEx) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, parseEx);
                                     // Continua com a data anterior
                                 }
 
@@ -333,6 +342,7 @@ public class TelaAlterarAluno extends JFrame {
                                 new MenuPrincipal().setVisible(true);
 
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             dialogProgresso.dispose();
                             btnSalvar.setEnabled(true);
                             JOptionPane.showMessageDialog(null, "Erro na alteração: " + ex.getMessage());
@@ -407,6 +417,7 @@ public class TelaAlterarAluno extends JFrame {
                 Image imgRedimensionada = iconeOriginal.getImage().getScaledInstance(14, 14, Image.SCALE_SMOOTH);
                 label.setIcon(new ImageIcon(imgRedimensionada));
             } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                 System.out.println("Aviso: ícone da chave não encontrado.");
             }
         }

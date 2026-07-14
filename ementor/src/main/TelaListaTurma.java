@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import dao.TurmaDAO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -29,6 +32,7 @@ public class TelaListaTurma extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.CENTER);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar a logo.");
         }
         add(painelTopo, BorderLayout.NORTH);
@@ -90,6 +94,7 @@ public class TelaListaTurma extends JFrame {
             Image urlRemoverRedimensionada = urlRemover.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(urlRemover != null) btnRemover.setIcon(new ImageIcon(urlRemoverRedimensionada));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar ícones dos botões.");
         }
 
@@ -148,6 +153,7 @@ public class TelaListaTurma extends JFrame {
                             dispose();
                             new TelaListaTurma().setVisible(true);
                         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                             String msg = ex.getMessage();
                             if (msg != null && (msg.contains("foreign key constraint") || msg.contains("Cannot delete or update a parent row"))) {
                                 JOptionPane.showMessageDialog(null, "Não é possível remover esta turma pois há alunos matriculados nela.", "Erro de Integridade", JOptionPane.ERROR_MESSAGE);
@@ -179,6 +185,7 @@ public class TelaListaTurma extends JFrame {
                 });
             }
         } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             JOptionPane.showMessageDialog(null, "Erro ao carregar as turmas do banco de dados: " + e.getMessage());
         }
     }

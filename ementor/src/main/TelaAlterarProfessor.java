@@ -1,5 +1,8 @@
 package main;
 
+import exception.LogErro;
+import exception.CodigoErro;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,6 +35,7 @@ public class TelaAlterarProfessor extends JFrame {
         try {
             listaProfessores = new ProfessorDAO().listarprofessors();
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Erro ao carregar lista de professores: " + ex.getMessage());
         }
 
@@ -47,6 +51,7 @@ public class TelaAlterarProfessor extends JFrame {
             lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
             painelTopo.add(lblLogo, BorderLayout.NORTH);
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Logo não encontrada.");
         }
 
@@ -153,6 +158,7 @@ public class TelaAlterarProfessor extends JFrame {
             Image imgSalvar = iconSalvar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
             if(iconSalvar != null) btnSalvar.setIcon(new ImageIcon(imgSalvar));
         } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
             System.out.println("Aviso: Ícones não encontrados.");
         }
 
@@ -221,6 +227,7 @@ public class TelaAlterarProfessor extends JFrame {
                     atualizarIndiceAtual();
 
                 } catch (Exception ex) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
                     JOptionPane.showMessageDialog(null, "Erro ao salvar alterações: " + ex.getMessage());
                 }
             }
@@ -267,6 +274,7 @@ public class TelaAlterarProfessor extends JFrame {
                 limparFormulario();
             }
         } catch (Exception e) {
+            LogErro.registrar(CodigoErro.ERRO_SISTEMA, e);
             JOptionPane.showMessageDialog(this, "Erro na busca: " + e.getMessage());
         }
     }
