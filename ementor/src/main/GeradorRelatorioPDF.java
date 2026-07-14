@@ -96,21 +96,35 @@ public class GeradorRelatorioPDF {
                         tabelaAlunos.addCell(cellNotas);
                         tabelaAlunos.addCell(cellMedia);
 
-                        dao.EgressoDAO egressoDAO = new dao.EgressoDAO();
-
                         for (Aluno aluno : alunos) {
                             tabelaAlunos.addCell(new Phrase(aluno.getMatricula(), fonteNormal));
                             tabelaAlunos.addCell(new Phrase(aluno.getNome(), fonteNormal));
                             
-                            // Validação do status de egresso do aluno
-                            main.Egresso egresso = egressoDAO.buscar(aluno.getMatricula());
-                            if (egresso != null) {
-                                tabelaAlunos.addCell(new Phrase("Sim", fonteNormal));
-                                String atributoExclusivo = egresso.getProfissaoAtual();
-                                if (atributoExclusivo == null || atributoExclusivo.isEmpty()) {
-                                    atributoExclusivo = egresso.getCursoAtual();
+                            // Verifica se o aluno é um Egresso via SQL direto para não usar DAO quebrado
+                            boolean isEgresso = false;
+                            String profissaoAtual = null;
+                            String cursoAtual = null;
+                            try (java.sql.Connection conn = database.Conexao.getConnection();
+                                 java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT profissao_atual, curso_atual FROM egresso WHERE matricula = ?")) {
+                                stmt.setString(1, aluno.getMatricula());
+                                try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                                    if (rs.next()) {
+                                        isEgresso = true;
+                                        profissaoAtual = rs.getString("profissao_atual");
+                                        cursoAtual = rs.getString("curso_atual");
+                                    }
                                 }
-                                tabelaAlunos.addCell(new Phrase(atributoExclusivo, fonteNormal));
+                            } catch (Exception e) {
+                                // Ignora falhas de conexao aqui
+                            }
+
+                            if (isEgresso) {
+                                tabelaAlunos.addCell(new Phrase("Sim", fonteNormal));
+                                String atributoExclusivo = profissaoAtual;
+                                if (atributoExclusivo == null || atributoExclusivo.isEmpty()) {
+                                    atributoExclusivo = cursoAtual;
+                                }
+                                tabelaAlunos.addCell(new Phrase(atributoExclusivo != null ? atributoExclusivo : "-", fonteNormal));
                             } else {
                                 tabelaAlunos.addCell(new Phrase("Não", fonteNormal));
                                 tabelaAlunos.addCell(new Phrase("-", fonteNormal));

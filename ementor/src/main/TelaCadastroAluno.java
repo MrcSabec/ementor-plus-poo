@@ -1,6 +1,7 @@
+package  main;
+
 import exception.LogErro;
 import exception.CodigoErro;
-package  main;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

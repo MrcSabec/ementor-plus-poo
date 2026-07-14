@@ -65,10 +65,22 @@ public class TelaListaAluno extends JFrame {
 
         // Carrega os dados dos alunos a partir do banco de dados
         try {
+            java.util.Set<String> matriculasEgressos = new java.util.HashSet<>();
+            try (java.sql.Connection conn = database.Conexao.getConnection();
+                 java.sql.Statement stmt = conn.createStatement();
+                 java.sql.ResultSet rs = stmt.executeQuery("SELECT matricula FROM egresso")) {
+                while(rs.next()) {
+                    matriculasEgressos.add(rs.getString("matricula"));
+                }
+            } catch (Exception e) {}
+
             dao.AlunoDAO alunoDao = new dao.AlunoDAO();
             java.util.List<Aluno> listaAlunos = alunoDao.listarAlunos();
             for (Aluno a : listaAlunos) {
-                String nomeTurma = (a.getTurma() != null) ? a.getTurma().getNome() : "Sem Turma";
+                if (matriculasEgressos.contains(a.getMatricula())) {
+                    continue; // Ignora os egressos
+                }
+                String nomeTurma = (a.getTurma() != null) ? a.getTurma().getCodigo() : "Sem Turma";
                 modeloTabela.addRow(new Object[]{
                     a.getMatricula(), 
                     a.getNome(), 

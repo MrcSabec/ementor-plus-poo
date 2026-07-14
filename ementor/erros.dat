@@ -51,3 +51,133 @@ Código: 1006
 Descrição: Erro ao listar campos do banco de dados
 Mensagem: Unknown column 'e.matricula' in 'on clause'
 
+================================
+2026-07-14T13:16:38.200661822
+Código: 1002
+Descrição: Erro durante inserção
+Mensagem: Duplicate entry '1' for key 'pessoa.PRIMARY'
+
+================================
+2026-07-14T13:16:38.201425839
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro durante inserção
+
+================================
+2026-07-14T13:16:50.593679993
+Código: 1002
+Descrição: Erro durante inserção
+Mensagem: Duplicate entry '2' for key 'pessoa.PRIMARY'
+
+================================
+2026-07-14T13:16:50.594264738
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro durante inserção
+
+================================
+2026-07-14T13:32:50.402055313
+Código: 1005
+Descrição: Erro durante busca
+Mensagem: Unknown column 'e.cpf_pessoa' in 'on clause'
+
+================================
+2026-07-14T13:32:50.402464112
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro durante busca
+
+[14/07/2026 13:32:50] Erro: Erro inesperado na geração do relatório: Erro durante busca
+================================
+2026-07-14T13:32:50.402711779
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro inesperado: Erro durante busca
+
+================================
+2026-07-14T13:33:48.807645814
+Código: 1005
+Descrição: Erro durante busca
+Mensagem: Unknown column 'e.cpf_pessoa' in 'on clause'
+
+================================
+2026-07-14T13:33:48.807775474
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro durante busca
+
+[14/07/2026 13:33:48] Erro: Erro inesperado na geração do relatório: Erro durante busca
+================================
+2026-07-14T13:33:48.807940513
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro inesperado: Erro durante busca
+
+================================
+2026-07-14T13:33:57.292934091
+Código: 1005
+Descrição: Erro durante busca
+Mensagem: Unknown column 'e.cpf_pessoa' in 'on clause'
+
+================================
+2026-07-14T13:33:57.293002479
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro durante busca
+
+[14/07/2026 13:33:57] Erro: Erro inesperado na geração do relatório: Erro durante busca
+================================
+2026-07-14T13:33:57.293103267
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro inesperado: Erro durante busca
+
+================================
+2026-07-14T13:34:21.309647991
+Código: 2002
+Descrição: Erro de formatacao ou validacao de dados
+Mensagem: Unparseable date: "1"
+
+================================
+2026-07-14T13:34:29.368514277
+Código: 1002
+Descrição: Erro durante inserção
+Mensagem: Duplicate entry '123' for key 'pessoa.PRIMARY'
+
+================================
+2026-07-14T13:34:29.369404709
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro durante inserção
+
+================================
+2026-07-14T13:34:36.605301830
+Código: 1002
+Descrição: Erro durante inserção
+Mensagem: Duplicate entry '123' for key 'pessoa.PRIMARY'
+
+================================
+2026-07-14T13:34:36.605869343
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro durante inserção
+
+================================
+2026-07-14T13:36:07.424587722
+Código: 1005
+Descrição: Erro durante busca
+Mensagem: Unknown column 'e.cpf_pessoa' in 'on clause'
+
+================================
+2026-07-14T13:36:07.424748347
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro durante busca
+
+[14/07/2026 13:36:07] Erro: Erro inesperado na geração do relatório: Erro durante busca
+================================
+2026-07-14T13:36:07.424929116
+Código: 2003
+Descrição: Erro generico de sistema
+Mensagem: Erro inesperado: Erro durante busca
+
