@@ -236,6 +236,7 @@ public class AlunoDAO {
                 FROM aluno a 
                 JOIN pessoa p ON a.cpf_pessoa = p.cpf 
                 JOIN turma t ON a.codigo_turma = t.codigo
+                LEFT JOIN egresso e ON e.matricula = a.matricula WHERE e.matricula IS NULL 
                 ORDER BY p.nome
                 """;
 
@@ -256,11 +257,16 @@ public class AlunoDAO {
         ArrayList <Aluno> alunosTurma = new ArrayList<>();
 
         String sql = """
-                SELECT a.*, p.*, t.codigo, t.nome 
+                SELECT 
+                a.*, 
+                p.*, 
+                t.codigo, 
+                t.nome 
                 FROM aluno a 
                 JOIN pessoa p ON a.cpf_pessoa = p.cpf 
                 JOIN turma t ON t.codigo = a.codigo_turma 
-                WHERE a.codigo_turma = ? 
+                LEFT JOIN egresso e ON e.matricula = a.matricula WHERE e.matricula IS NULL 
+                AND a.codigo_turma = ? 
                 ORDER BY p.nome
                 """;
         try (Connection connection = Conexao.getConnection();
