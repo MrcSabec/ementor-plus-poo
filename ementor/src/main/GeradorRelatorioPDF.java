@@ -67,7 +67,35 @@ public class GeradorRelatorioPDF {
                     document.add(pTurma);
 
                     List<Aluno> alunos = turma.getAlunos();
-                    if (alunos != null && !alunos.isEmpty()) {
+                    
+                    // Busca Egressos da Turma manualmente via SQL para contornar o DAO
+                    java.util.List<java.util.Map<String, Object>> listaEgressos = new java.util.ArrayList<>();
+                    try (java.sql.Connection conn = database.Conexao.getConnection();
+                         java.sql.PreparedStatement stmt = conn.prepareStatement(
+                             "SELECT a.matricula, p.nome, a.nota1, a.nota2, a.nota3, a.nota4, a.nota5, a.nota6, a.nota7, a.nota8, a.nota9, a.nota10, e.profissao_atual, e.curso_atual " +
+                             "FROM egresso e " +
+                             "JOIN aluno a ON e.matricula = a.matricula " +
+                             "JOIN pessoa p ON a.cpf_pessoa = p.cpf " +
+                             "WHERE a.codigo_turma = ? ORDER BY p.nome")) {
+                        stmt.setString(1, turma.getCodigo());
+                        try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                            while (rs.next()) {
+                                java.util.Map<String, Object> map = new java.util.HashMap<>();
+                                map.put("matricula", rs.getString("matricula"));
+                                map.put("nome", rs.getString("nome"));
+                                map.put("profissao_atual", rs.getString("profissao_atual"));
+                                map.put("curso_atual", rs.getString("curso_atual"));
+                                double[] n = new double[10];
+                                for (int i=1; i<=10; i++) n[i-1] = rs.getDouble("nota"+i);
+                                map.put("notas", n);
+                                listaEgressos.add(map);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        LogErro.registrar(CodigoErro.ERRO_SISTEMA, ex);
+                    }
+
+                    if ((alunos != null && !alunos.isEmpty()) || !listaEgressos.isEmpty()) {
                         PdfPTable tabelaAlunos = new PdfPTable(6);
                         tabelaAlunos.setWidthPercentage(100);
                         tabelaAlunos.setWidths(new float[]{1.5f, 2.5f, 1.2f, 2f, 3f, 1f});
@@ -96,57 +124,64 @@ public class GeradorRelatorioPDF {
                         tabelaAlunos.addCell(cellNotas);
                         tabelaAlunos.addCell(cellMedia);
 
-                        for (Aluno aluno : alunos) {
-                            tabelaAlunos.addCell(new Phrase(aluno.getMatricula(), fonteNormal));
-                            tabelaAlunos.addCell(new Phrase(aluno.getNome(), fonteNormal));
-                            
-                            // Verifica se o aluno é um Egresso via SQL direto para não usar DAO quebrado
-                            boolean isEgresso = false;
-                            String profissaoAtual = null;
-                            String cursoAtual = null;
-                            try (java.sql.Connection conn = database.Conexao.getConnection();
-                                 java.sql.PreparedStatement stmt = conn.prepareStatement("SELECT profissao_atual, curso_atual FROM egresso WHERE matricula = ?")) {
-                                stmt.setString(1, aluno.getMatricula());
-                                try (java.sql.ResultSet rs = stmt.executeQuery()) {
-                                    if (rs.next()) {
-                                        isEgresso = true;
-                                        profissaoAtual = rs.getString("profissao_atual");
-                                        cursoAtual = rs.getString("curso_atual");
-                                    }
-                                }
-                            } catch (Exception e) {
-                                // Ignora falhas de conexao aqui
-                            }
+                        if (alunos != null) {
+                            for (Aluno aluno : alunos) {
+                                tabelaAlunos.addCell(new Phrase(aluno.getMatricula(), fonteNormal));
+                                tabelaAlunos.addCell(new Phrase(aluno.getNome(), fonteNormal));
 
-                            if (isEgresso) {
-                                tabelaAlunos.addCell(new Phrase("Sim", fonteNormal));
-                                String atributoExclusivo = profissaoAtual;
-                                if (atributoExclusivo == null || atributoExclusivo.isEmpty()) {
-                                    atributoExclusivo = cursoAtual;
-                                }
-                                tabelaAlunos.addCell(new Phrase(atributoExclusivo != null ? atributoExclusivo : "-", fonteNormal));
-                            } else {
+                                // Celulas de Egresso e Atributo (Sempre Não para alunos normais)
                                 tabelaAlunos.addCell(new Phrase("Não", fonteNormal));
                                 tabelaAlunos.addCell(new Phrase("-", fonteNormal));
+
+                                double[] notas = aluno.getNotas();
+                                double soma = 0;
+                                int count = 0;
+                                StringBuilder notasStr = new StringBuilder();
+                                if (notas != null) {
+                                    for (int i = 0; i < notas.length; i++) {
+                                        if (notas[i] > 0) {
+                                            soma += notas[i];
+                                            count++;
+                                            notasStr.append(df.format(notas[i]));
+                                        } else {
+                                            notasStr.append("-");
+                                        }
+                                        if (i < notas.length - 1) notasStr.append(" | ");
+                                    }
+                                }
+                                
+                                Font fonteNotas = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
+                                tabelaAlunos.addCell(new Phrase(notasStr.toString(), fonteNotas));
+                                
+                                String mediaStr = (count > 0) ? df.format(soma / count) : "S/ Nota";
+                                tabelaAlunos.addCell(new Phrase(mediaStr, fonteNormal));
                             }
+                        }
+
+                        // Imprime os egressos
+                        for (java.util.Map<String, Object> map : listaEgressos) {
+                            tabelaAlunos.addCell(new Phrase((String) map.get("matricula"), fonteNormal));
+                            tabelaAlunos.addCell(new Phrase((String) map.get("nome"), fonteNormal));
                             
-                            // Formatação das notas e cálculo da média
-                            double[] notas = aluno.getNotas();
+                            tabelaAlunos.addCell(new Phrase("Sim", fonteNormal));
+                            String profissao = (String) map.get("profissao_atual");
+                            String curso = (String) map.get("curso_atual");
+                            String excl = (profissao != null && !profissao.isEmpty()) ? profissao : curso;
+                            tabelaAlunos.addCell(new Phrase(excl != null ? excl : "-", fonteNormal));
+                            
+                            double[] n = (double[]) map.get("notas");
                             double soma = 0;
                             int count = 0;
                             StringBuilder notasStr = new StringBuilder();
-                            
-                            if (notas != null) {
-                                for (int i = 0; i < notas.length; i++) {
-                                    if (notas[i] > 0) { // Considera apenas notas válidas (maiores que zero)
-                                        soma += notas[i];
-                                        count++;
-                                        notasStr.append(df.format(notas[i]));
-                                    } else {
-                                        notasStr.append("-");
-                                    }
-                                    if (i < notas.length - 1) notasStr.append(" | ");
+                            for (int i = 0; i < 10; i++) {
+                                if (n[i] > 0) {
+                                    soma += n[i];
+                                    count++;
+                                    notasStr.append(df.format(n[i]));
+                                } else {
+                                    notasStr.append("-");
                                 }
+                                if (i < 9) notasStr.append(" | ");
                             }
                             
                             Font fonteNotas = new Font(Font.FontFamily.HELVETICA, 10, Font.NORMAL);
